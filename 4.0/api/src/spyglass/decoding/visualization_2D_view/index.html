@@ -1344,26 +1344,6 @@
     create_2D_decode_view()
   </a>
   
-    <nav class="md-nav" aria-label="create_2D_decode_view()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2300,26 +2280,6 @@
     create_2D_decode_view()
   </a>
   
-    <nav class="md-nav" aria-label="create_2D_decode_view()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2368,14 +2328,88 @@
   <div class="doc doc-contents ">
   
       <p>Creates a 2D decoding movie view</p>
-<h4 id="src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--parameters">Parameters<a class="headerlink" href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--parameters" title="Permanent link">&para;</a></h4>
-<p>position_time : np.ndarray, shape (n_time,)
-position : np.ndarray, shape (n_time, 2)
-posterior : xr.DataArray, shape (n_time, n_position_bins)
-bin_size : float
-head_dir : np.ndarray, optional</p>
-<h4 id="src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--returns">Returns<a class="headerlink" href="#src.spyglass.decoding.visualization_2D_view.create_2D_decode_view--returns" title="Permanent link">&para;</a></h4>
-<p>view : vvf.TrackPositionAnimationV1</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>position_time</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, shape(n_time)</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>position</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, shape(n_time, 2)</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>posterior</code></td>
+          <td>
+                <code><span title="xarray">xr</span>.<span title="xarray.DataArray">DataArray</span>, shape(n_time, n_position_bins)</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>bin_size</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>head_dir</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>view</code></td>          <td>
+                <code><span title="sortingview.views.franklab">vvf</span>.<span title="sortingview.views.franklab.TrackPositionAnimationV1">TrackPositionAnimationV1</span></code>
+          </td>
+          <td></td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/decoding/visualization_2D_view.py</code></summary>

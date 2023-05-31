@@ -2070,26 +2070,6 @@
     dj_replace()
   </a>
   
-    <nav class="md-nav" aria-label="dj_replace()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.dj_replace--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.dj_replace--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2097,52 +2077,12 @@
     get_nwb_file()
   </a>
   
-    <nav class="md-nav" aria-label="get_nwb_file()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb" class="md-nav__link">
     fetch_nwb()
   </a>
-  
-    <nav class="md-nav" aria-label="fetch_nwb()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2354,26 +2294,6 @@
     dj_replace()
   </a>
   
-    <nav class="md-nav" aria-label="dj_replace()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.dj_replace--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.dj_replace--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2381,52 +2301,12 @@
     get_nwb_file()
   </a>
   
-    <nav class="md-nav" aria-label="get_nwb_file()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb" class="md-nav__link">
     fetch_nwb()
   </a>
-  
-    <nav class="md-nav" aria-label="fetch_nwb()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2481,24 +2361,67 @@
 find each instance of key_value in the key_column of the original table and replace the specified replace_column
 with the associated replace_value.
 Key values must be unique.</p>
-<h4 id="src.spyglass.utils.dj_helper_fn.dj_replace--parameters">Parameters<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.dj_replace--parameters" title="Permanent link">&para;</a></h4>
-<p>original_table
-    Result of a datajoint .fetch() call on a schema query.</p>
 
-<details class="new_values-" open>
-  <summary>list</summary>
-  <p>List of tuples, each containing (key_value, replace_value).</p>
-</details>
-<details class="index_column-" open>
-  <summary>str</summary>
-  <p>The name of the column where the key_values are located.</p>
-</details>
-<details class="replace_column-" open>
-  <summary>str</summary>
-  <p>The name of the column where to-be-replaced values are located.</p>
-</details>      <h4 id="src.spyglass.utils.dj_helper_fn.dj_replace--returns">Returns<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.dj_replace--returns" title="Permanent link">&para;</a></h4>
-<p>original_table
-    Structured array of new table entries that can be inserted back into the schema</p>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>original_table</code></td>
+          <td>
+          </td>
+          <td><p>Result of a datajoint .fetch() call on a schema query.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>new_values</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>List of tuples, each containing (key_value, replace_value).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>replace_column</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The name of the column where to-be-replaced values are located.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>original_table</code>
+          </td>
+          <td><p>Structured array of new table entries that can be inserted back into the schema</p></td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/utils/dj_helper_fn.py</code></summary>
@@ -2532,9 +2455,7 @@ Key values must be unique.</p>
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dj_replace</span><span class="p">(</span><span class="n">original_table</span><span class="p">,</span> <span class="n">new_values</span><span class="p">,</span> <span class="n">key_column</span><span class="p">,</span> <span class="n">replace_column</span><span class="p">):</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dj_replace</span><span class="p">(</span><span class="n">original_table</span><span class="p">,</span> <span class="n">new_values</span><span class="p">,</span> <span class="n">key_column</span><span class="p">,</span> <span class="n">replace_column</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Given the output of a fetch() call from a schema and a 2D array made up of (key_value, replace_value) tuples,</span>
 <span class="sd">    find each instance of key_value in the key_column of the original table and replace the specified replace_column</span>
 <span class="sd">    with the associated replace_value.</span>
@@ -2546,8 +2467,6 @@ Key values must be unique.</p>
 <span class="sd">        Result of a datajoint .fetch() call on a schema query.</span>
 <span class="sd">    new_values : list</span>
 <span class="sd">        List of tuples, each containing (key_value, replace_value).</span>
-<span class="sd">    index_column : str</span>
-<span class="sd">        The name of the column where the key_values are located.</span>
 <span class="sd">    replace_column : str</span>
 <span class="sd">        The name of the column where to-be-replaced values are located.</span>
 
@@ -2592,17 +2511,49 @@ Key values must be unique.</p>
   
       <p>Return an NWBFile object with the given file path in read mode.
    If the file is not found locally, this will check if it has been shared with kachery and if so, download it and open it.</p>
-<h4 id="src.spyglass.utils.dj_helper_fn.get_nwb_file--parameters">Parameters<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--parameters" title="Permanent link">&para;</a></h4>
 
-<details class="nwb_file_path-" open>
-  <summary>str</summary>
-  <p>Path to the NWB file.</p>
-</details>      <h4 id="src.spyglass.utils.dj_helper_fn.get_nwb_file--returns">Returns<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.get_nwb_file--returns" title="Permanent link">&para;</a></h4>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>nwb_file_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Path to the NWB file.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
-<details class="nwbfile-" open>
-  <summary>pynwb.NWBFile</summary>
-  <p>NWB file object for the given path opened in read mode.</p>
-</details>
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>nwbfile</code></td>          <td>
+                <code>pynwb.<span title="pynwb.NWBFile">NWBFile</span></code>
+          </td>
+          <td><p>NWB file object for the given path opened in read mode.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/utils/nwb_helper_fn.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
@@ -2702,33 +2653,87 @@ Key values must be unique.</p>
   <div class="doc doc-contents ">
   
       <p>Get an NWB object from the given DataJoint query.</p>
-<h4 id="src.spyglass.utils.dj_helper_fn.fetch_nwb--parameters">Parameters<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--parameters" title="Permanent link">&para;</a></h4>
-<p>query_expression
-    A DataJoint query expression (e.g., join, restrict) or a table to call fetch on.</p>
 
-<details class="nwb_master-" open>
-  <summary>tuple</summary>
-  <p>Tuple (table, attr) to get the NWB filepath from.
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>query_expression</code></td>
+          <td>
+                <code>query</code>
+          </td>
+          <td><p>A DataJoint query expression (e.g., join, restrict) or a table to call fetch on.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>nwb_master</code></td>
+          <td>
+                <code>tuple</code>
+          </td>
+          <td><p>Tuple (table, attr) to get the NWB filepath from.
 i.e. absolute path to NWB file can be obtained by looking up attr column of table
 table is usually Nwbfile or AnalysisNwbfile;
-attr is usually 'nwb_file_abs_path' or 'analysis_file_abs_path'</p>
-</details>
-<details class="attrs-" open>
-  <summary>list</summary>
-  <p>Attributes from normal DataJoint fetch call.</p>
-</details>
-<details class="kwargs-" open>
-  <summary>dict</summary>
-  <p>Keyword arguments from normal DataJoint fetch call.</p>
-</details>      <h4 id="src.spyglass.utils.dj_helper_fn.fetch_nwb--returns">Returns<a class="headerlink" href="#src.spyglass.utils.dj_helper_fn.fetch_nwb--returns" title="Permanent link">&para;</a></h4>
+attr is usually 'nwb_file_abs_path' or 'analysis_file_abs_path'</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>*attrs</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>Attributes from normal DataJoint fetch call.</p></td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>**kwargs</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>Keyword arguments from normal DataJoint fetch call.</p></td>
+          <td>
+                <code>{}</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
-<details class="nwb_objects-" open>
-  <summary>list</summary>
-  <p>List of dicts containing fetch results and NWB objects.</p>
-</details>
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>nwb_objects</code></td>          <td>
+                <code>list</code>
+          </td>
+          <td><p>List of dicts containing fetch results and NWB objects.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/utils/dj_helper_fn.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 46</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
 <span class="normal"> 47</span>
 <span class="normal"> 48</span>
 <span class="normal"> 49</span>
@@ -2796,23 +2801,21 @@ attr is usually 'nwb_file_abs_path' or 'analysis_file_abs_path'</p>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fetch_nwb</span><span class="p">(</span><span class="n">query_expression</span><span class="p">,</span> <span class="n">nwb_master</span><span class="p">,</span> <span class="o">*</span><span class="n">attrs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fetch_nwb</span><span class="p">(</span><span class="n">query_expression</span><span class="p">,</span> <span class="n">nwb_master</span><span class="p">,</span> <span class="o">*</span><span class="n">attrs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an NWB object from the given DataJoint query.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    query_expression</span>
+<span class="sd">    query_expression : query</span>
 <span class="sd">        A DataJoint query expression (e.g., join, restrict) or a table to call fetch on.</span>
 <span class="sd">    nwb_master : tuple</span>
 <span class="sd">        Tuple (table, attr) to get the NWB filepath from.</span>
 <span class="sd">        i.e. absolute path to NWB file can be obtained by looking up attr column of table</span>
 <span class="sd">        table is usually Nwbfile or AnalysisNwbfile;</span>
 <span class="sd">        attr is usually &#39;nwb_file_abs_path&#39; or &#39;analysis_file_abs_path&#39;</span>
-<span class="sd">    attrs : list</span>
+<span class="sd">    *attrs : list</span>
 <span class="sd">        Attributes from normal DataJoint fetch call.</span>
-<span class="sd">    kwargs : dict</span>
+<span class="sd">    **kwargs : dict</span>
 <span class="sd">        Keyword arguments from normal DataJoint fetch call.</span>
 
 <span class="sd">    Returns</span>

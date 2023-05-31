@@ -1349,26 +1349,6 @@
     get_spike_indicator()
   </a>
   
-    <nav class="md-nav" aria-label="get_spike_indicator()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1376,52 +1356,12 @@
     get_decoding_data_for_epoch()
   </a>
   
-    <nav class="md-nav" aria-label="get_decoding_data_for_epoch()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs" class="md-nav__link">
     get_data_for_multiple_epochs()
   </a>
-  
-    <nav class="md-nav" aria-label="get_data_for_multiple_epochs()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2448,26 +2388,6 @@
     get_spike_indicator()
   </a>
   
-    <nav class="md-nav" aria-label="get_spike_indicator()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2475,52 +2395,12 @@
     get_decoding_data_for_epoch()
   </a>
   
-    <nav class="md-nav" aria-label="get_decoding_data_for_epoch()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs" class="md-nav__link">
     get_data_for_multiple_epochs()
   </a>
-  
-    <nav class="md-nav" aria-label="get_data_for_multiple_epochs()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -3060,19 +2940,69 @@ Useful for GLMs and for decoding.</p>
   <div class="doc doc-contents ">
   
       <p>For a given key, returns a dataframe with the spike indicator for each unit</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_spike_indicator--parameters">Parameters<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--parameters" title="Permanent link">&para;</a></h4>
-<p>key : dict</p>
 
-<details class="time_range-" open>
-  <summary>tuple[float, float]</summary>
-  <p>Start and end time of the spike indicator</p>
-</details>      <p>sampling_rate : float, optional</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_spike_indicator--returns">Returns<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_spike_indicator--returns" title="Permanent link">&para;</a></h4>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>key</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>time_range</code></td>
+          <td>
+                <code>tuple[float, float]</code>
+          </td>
+          <td><p>Start and end time of the spike indicator</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>sampling_rate</code></td>
+          <td>
+                <code>float, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>500.0</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
-<details class="spike_indicator-" open>
-  <summary>pd.DataFrame, shape (n_time, n_units)</summary>
-  <p>A dataframe with the spike indicator for each unit</p>
-</details>
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>spike_indicator</code></td>          <td>
+                <code><span title="pandas">pd</span>.<span title="pandas.DataFrame">DataFrame</span>, shape(n_time, n_units)</code>
+          </td>
+          <td><p>A dataframe with the spike indicator for each unit</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/decoding/sorted_spikes.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">248</span>
@@ -3180,15 +3110,90 @@ Useful for GLMs and for decoding.</p>
   <div class="doc doc-contents ">
   
       <p>Collects the data needed for decoding</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--parameters">Parameters<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--parameters" title="Permanent link">&para;</a></h4>
-<p>nwb_file_name : str
-interval_list_name : str
-position_info_param_name : str, optional
-additional_spike_keys : dict, optional</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--returns">Returns<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_decoding_data_for_epoch--returns" title="Permanent link">&para;</a></h4>
-<p>position_info : pd.DataFrame, shape (n_time, n_position_features)
-spikes : pd.DataFrame, shape (n_time, n_units)
-valid_slices : list[slice]</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>nwb_file_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>interval_list_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>position_info_param_name</code></td>
+          <td>
+                <code>str, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>&#39;default&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>additional_spike_keys</code></td>
+          <td>
+                <code>dict, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>{}</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>position_info</code></td>          <td>
+                <code><span title="pandas">pd</span>.<span title="pandas.DataFrame">DataFrame</span>, shape(n_time, n_position_features)</code>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+<td><code>spikes</code></td>          <td>
+                <code><span title="pandas">pd</span>.<span title="pandas.DataFrame">DataFrame</span>, shape(n_time, n_units)</code>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+<td><code>valid_slices</code></td>          <td>
+                <code>list[slice]</code>
+          </td>
+          <td></td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/decoding/sorted_spikes.py</code></summary>
@@ -3347,24 +3352,103 @@ valid_slices : list[slice]</p>
   <div class="doc doc-contents ">
   
       <p>Collects the data needed for decoding for multiple epochs</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--parameters">Parameters<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--parameters" title="Permanent link">&para;</a></h4>
-<p>nwb_file_name : str
-epoch_names : list
-position_info_param_name : str, optional
-additional_spike_keys : dict, optional</p>
-<h4 id="src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--returns">Returns<a class="headerlink" href="#src.spyglass.decoding.sorted_spikes.get_data_for_multiple_epochs--returns" title="Permanent link">&para;</a></h4>
-<p>position_info : pd.DataFrame, shape (n_time, n_position_features)
-spikes : pd.DataFrame, shape (n_time, n_units)
-valid_slices : list[slice]</p>
 
-<details class="environment_labels-" open>
-  <summary>np.ndarray, shape (n_time,)</summary>
-  <p>The environment label for each time point</p>
-</details>
-<details class="sort_group_ids-" open>
-  <summary>np.ndarray, shape (n_units,)</summary>
-  <p>The sort group of each unit</p>
-</details>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>nwb_file_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>epoch_names</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>position_info_param_name</code></td>
+          <td>
+                <code>str, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>&#39;decoding&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>additional_spike_keys</code></td>
+          <td>
+                <code>dict, optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>{}</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>position_info</code></td>          <td>
+                <code><span title="pandas">pd</span>.<span title="pandas.DataFrame">DataFrame</span>, shape(n_time, n_position_features)</code>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+<td><code>spikes</code></td>          <td>
+                <code><span title="pandas">pd</span>.<span title="pandas.DataFrame">DataFrame</span>, shape(n_time, n_units)</code>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+<td><code>valid_slices</code></td>          <td>
+                <code>list[slice]</code>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+<td><code>environment_labels</code></td>          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, shape(n_time)</code>
+          </td>
+          <td><p>The environment label for each time point</p></td>
+        </tr>
+        <tr>
+<td><code>sort_group_ids</code></td>          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, shape(n_units)</code>
+          </td>
+          <td><p>The sort group of each unit</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/decoding/sorted_spikes.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">359</span>

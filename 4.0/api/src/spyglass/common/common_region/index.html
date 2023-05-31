@@ -998,26 +998,6 @@
     fetch_add()
   </a>
   
-    <nav class="md-nav" aria-label="fetch_add()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_region.BrainRegion.fetch_add--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_region.BrainRegion.fetch_add--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -2321,26 +2301,6 @@
     fetch_add()
   </a>
   
-    <nav class="md-nav" aria-label="fetch_add()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_region.BrainRegion.fetch_add--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_region.BrainRegion.fetch_add--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -2514,25 +2474,69 @@
   
       <p>Return the region ID for the given names, and if no match exists, first add it to the BrainRegion table.</p>
 <p>The combination of (region_name, subregion_name, subsubregion_name) is effectively unique, then.</p>
-<h5 id="src.spyglass.common.common_region.BrainRegion.fetch_add--parameters">Parameters<a class="headerlink" href="#src.spyglass.common.common_region.BrainRegion.fetch_add--parameters" title="Permanent link">&para;</a></h5>
 
-<details class="region_name-" open>
-  <summary>str</summary>
-  <p>The name of the brain region.</p>
-</details>
-<details class="subregion_name-" open>
-  <summary>str, optional</summary>
-  <p>The name of the subregion within the brain region.</p>
-</details>
-<details class="subsubregion_name-" open>
-  <summary>str, optional</summary>
-  <p>The name of the subregion within the subregion.</p>
-</details>      <h5 id="src.spyglass.common.common_region.BrainRegion.fetch_add--returns">Returns<a class="headerlink" href="#src.spyglass.common.common_region.BrainRegion.fetch_add--returns" title="Permanent link">&para;</a></h5>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>region_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The name of the brain region.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>subregion_name</code></td>
+          <td>
+                <code>str, optional</code>
+          </td>
+          <td><p>The name of the subregion within the brain region.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>subsubregion_name</code></td>
+          <td>
+                <code>str, optional</code>
+          </td>
+          <td><p>The name of the subregion within the subregion.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
-<details class="region_id-" open>
-  <summary>int</summary>
-  <p>The index of the region in the BrainRegion table.</p>
-</details>
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>region_id</code></td>          <td>
+                <code>int</code>
+          </td>
+          <td><p>The index of the region in the BrainRegion table.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/common/common_region.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>

@@ -1330,26 +1330,6 @@
     create_1D_decode_view()
   </a>
   
-    <nav class="md-nav" aria-label="create_1D_decode_view()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2300,26 +2280,6 @@
     create_1D_decode_view()
   </a>
   
-    <nav class="md-nav" aria-label="create_1D_decode_view()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2368,15 +2328,68 @@
   <div class="doc doc-contents ">
   
       <p>Creates a view of an interactive heatmap of position vs. time.</p>
-<h4 id="src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--parameters">Parameters<a class="headerlink" href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--parameters" title="Permanent link">&para;</a></h4>
-<p>posterior : xr.DataArray, shape (n_time, n_position_bins)
-linear_position : np.ndarray, shape (n_time, ), optional</p>
 
-<details class="ref_time_sec-" open>
-  <summary>np.float64, optional</summary>
-  <p>Reference time for the purpose of offsetting the start time</p>
-</details>      <h4 id="src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--returns">Returns<a class="headerlink" href="#src.spyglass.decoding.visualization_1D_view.create_1D_decode_view--returns" title="Permanent link">&para;</a></h4>
-<p>view : vvf.DecodedLinearPositionData</p>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>posterior</code></td>
+          <td>
+                <code><span title="xarray">xr</span>.<span title="xarray.DataArray">DataArray</span>, shape(n_time, n_position_bins)</code>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>linear_position</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span>, shape(n_time), optional</code>
+          </td>
+          <td></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>ref_time_sec</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.float64">float64</span>, optional</code>
+          </td>
+          <td><p>Reference time for the purpose of offsetting the start time</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>view</code></td>          <td>
+                <code><span title="sortingview.views.franklab">vvf</span>.<span title="sortingview.views.franklab.DecodedLinearPositionData">DecodedLinearPositionData</span></code>
+          </td>
+          <td></td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/decoding/visualization_1D_view.py</code></summary>

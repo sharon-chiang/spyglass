@@ -1655,19 +1655,6 @@
     read_yaml()
   </a>
   
-    <nav class="md-nav" aria-label="read_yaml()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.read_yaml--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1675,45 +1662,12 @@
     save_yaml()
   </a>
   
-    <nav class="md-nav" aria-label="save_yaml()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.save_yaml--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.save_yaml--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation" class="md-nav__link">
     do_pose_estimation()
   </a>
-  
-    <nav class="md-nav" aria-label="do_pose_estimation()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2342,19 +2296,6 @@
     read_yaml()
   </a>
   
-    <nav class="md-nav" aria-label="read_yaml()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.read_yaml--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2362,45 +2303,12 @@
     save_yaml()
   </a>
   
-    <nav class="md-nav" aria-label="save_yaml()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.save_yaml--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.save_yaml--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
   <a href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation" class="md-nav__link">
     do_pose_estimation()
   </a>
-  
-    <nav class="md-nav" aria-label="do_pose_estimation()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2450,10 +2358,39 @@
   <div class="doc doc-contents ">
   
       <p>Return contents of yml in fullpath. If available, defer to DJ-saved version</p>
-<h4 id="src.spyglass.position.v1.dlc_reader.read_yaml--parameters">Parameters<a class="headerlink" href="#src.spyglass.position.v1.dlc_reader.read_yaml--parameters" title="Permanent link">&para;</a></h4>
-<p>fullpath: String or pathlib path. Directory with yaml files
-filename: String. Filename, no extension. Permits wildcards.</p>
-<p>Returns filepath and contents as dict</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>fullpath</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>filename</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+                <code>&#39;*&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <p>Returns filepath and contents as dict</p>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/position/v1/dlc_reader.py</code></summary>
@@ -2524,18 +2461,75 @@ filename: String. Filename, no extension. Permits wildcards.</p>
   <div class="doc doc-contents ">
   
       <p>Save config_dict to output_path as filename.yaml. By default, preserves original.</p>
-<h4 id="src.spyglass.position.v1.dlc_reader.save_yaml--parameters">Parameters<a class="headerlink" href="#src.spyglass.position.v1.dlc_reader.save_yaml--parameters" title="Permanent link">&para;</a></h4>
-<p>output_dir: where to save yaml file
-config_dict: dict of config params or element-deeplabcut model.Model dict</p>
 
-<details class="filename" open>
-  <summary>Optional, default 'dj_dlc_config' or preserve original 'config'</summary>
-  <p>Set to 'config' to overwrite original file.
-If extension is included, removed and replaced with "yaml".</p>
-</details>      <p>mkdir (bool): Optional, True. Make new directory if output_dir not exist</p>
-<h4 id="src.spyglass.position.v1.dlc_reader.save_yaml--returns">Returns<a class="headerlink" href="#src.spyglass.position.v1.dlc_reader.save_yaml--returns" title="Permanent link">&para;</a></h4>
-<p>str
-    path of saved file as string - due to DLC func preference for strings</p>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>output_dir</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>config_dict</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>filename</code></td>
+          <td>
+          </td>
+          <td><p>Set to 'config' to overwrite original file.
+If extension is included, removed and replaced with "yaml".</p></td>
+          <td>
+                <code>&#39;dj_dlc_config&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>mkdir</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>path of saved file as string - due to DLC func preference for strings</p></td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/position/v1/dlc_reader.py</code></summary>
@@ -2612,7 +2606,7 @@ If extension is included, removed and replaced with "yaml".</p>
 
 
 <h2 id="src.spyglass.position.v1.dlc_reader.do_pose_estimation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">do_pose_estimation</span><span class="p">(</span><span class="n">video_filepaths</span><span class="p">,</span> <span class="n">dlc_model</span><span class="p">,</span> <span class="n">project_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">videotype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">gputouse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_as_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cropping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">TFGPUinference</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">robust_nframes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_growth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_shelve</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">modelprefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">do_pose_estimation</span><span class="p">(</span><span class="n">video_filepaths</span><span class="p">,</span> <span class="n">dlc_model</span><span class="p">,</span> <span class="n">project_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">videotype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">gputouse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_as_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cropping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">TFGPUinference</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">robust_nframes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_growth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_shelve</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -2620,12 +2614,58 @@ If extension is included, removed and replaced with "yaml".</p>
   <div class="doc doc-contents ">
   
       <p>Launch DLC's analyze_videos within element-deeplabcut</p>
-<h4 id="src.spyglass.position.v1.dlc_reader.do_pose_estimation--parameters">Parameters<a class="headerlink" href="#src.spyglass.position.v1.dlc_reader.do_pose_estimation--parameters" title="Permanent link">&para;</a></h4>
-<p>video_filepaths: list of videos to analyze
-dlc_model: element-deeplabcut dlc.Model dict
-project_path: path to project config.yml
-output_dir: where to save output
-OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters</p>
+<p>Other optional parameters may be set other than those described below. See 
+deeplabcut.analyze_videos parameters for descriptions/defaults.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>video_filepaths</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>dlc_model</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>project_path</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>output_dir</code></td>
+          <td>
+          </td>
+          <td></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>src/spyglass/position/v1/dlc_reader.py</code></summary>
@@ -2687,7 +2727,8 @@ OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters</p
 <span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span>
-<span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">do_pose_estimation</span><span class="p">(</span>
+<span class="normal">265</span>
+<span class="normal">266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">do_pose_estimation</span><span class="p">(</span>
     <span class="n">video_filepaths</span><span class="p">,</span>
     <span class="n">dlc_model</span><span class="p">,</span>
     <span class="n">project_path</span><span class="p">,</span>
@@ -2702,9 +2743,11 @@ OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters</p
     <span class="n">robust_nframes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">allow_growth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">use_shelve</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">modelprefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># need from paramset</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Launch DLC&#39;s analyze_videos within element-deeplabcut</span>
+
+<span class="sd">    Other optional parameters may be set other than those described below. See </span>
+<span class="sd">    deeplabcut.analyze_videos parameters for descriptions/defaults.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2712,7 +2755,6 @@ OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters</p
 <span class="sd">    dlc_model: element-deeplabcut dlc.Model dict</span>
 <span class="sd">    project_path: path to project config.yml</span>
 <span class="sd">    output_dir: where to save output</span>
-<span class="sd">    OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">deeplabcut.pose_estimation_tensorflow</span> <span class="kn">import</span> <span class="n">analyze_videos</span>
 

@@ -961,26 +961,6 @@
     get_electrode_indices()
   </a>
   
-    <nav class="md-nav" aria-label="get_electrode_indices()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_filter.get_electrode_indices--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_filter.get_electrode_indices--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2381,26 +2361,6 @@
   <a href="#src.spyglass.common.common_filter.get_electrode_indices" class="md-nav__link">
     get_electrode_indices()
   </a>
-  
-    <nav class="md-nav" aria-label="get_electrode_indices()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_filter.get_electrode_indices--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_filter.get_electrode_indices--returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4122,21 +4082,59 @@ nwbfile.electrodes has ID 10, then calling get_electrode_indices(electricalserie
 index of the matching electrode in electricalseries.electrodes.</p>
 <p>Indices for electrode_ids that are not in the electrical series are returned as np.nan</p>
 <p>If an NWBFile is given, then the row indices with the matching IDs in the file's electrodes table are returned.</p>
-<h4 id="src.spyglass.common.common_filter.get_electrode_indices--parameters">Parameters<a class="headerlink" href="#src.spyglass.common.common_filter.get_electrode_indices--parameters" title="Permanent link">&para;</a></h4>
 
-<details class="nwb_object-" open>
-  <summary>pynwb.NWBFile or pynwb.ecephys.ElectricalSeries</summary>
-  <p>The NWB file object or NWB electrical series object.</p>
-</details>
-<details class="electrode_ids-" open>
-  <summary>np.ndarray or list</summary>
-  <p>Array or list of electrode IDs.</p>
-</details>      <h4 id="src.spyglass.common.common_filter.get_electrode_indices--returns">Returns<a class="headerlink" href="#src.spyglass.common.common_filter.get_electrode_indices--returns" title="Permanent link">&para;</a></h4>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>nwb_object</code></td>
+          <td>
+                <code>pynwb.NWBFile or pynwb.ecephys.ElectricalSeries</code>
+          </td>
+          <td><p>The NWB file object or NWB electrical series object.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>electrode_ids</code></td>
+          <td>
+                <code>np.ndarray or list</code>
+          </td>
+          <td><p>Array or list of electrode IDs.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
-<details class="electrode_indices-" open>
-  <summary>list</summary>
-  <p>Array of indices of the specified electrode IDs.</p>
-</details>
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>electrode_indices</code></td>          <td>
+                <code>list</code>
+          </td>
+          <td><p>Array of indices of the specified electrode IDs.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/utils/nwb_helper_fn.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">257</span>

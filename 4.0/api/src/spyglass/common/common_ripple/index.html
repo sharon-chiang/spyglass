@@ -1012,19 +1012,6 @@
     set_lfp_electrodes()
   </a>
   
-    <nav class="md-nav" aria-label="set_lfp_electrodes()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_ripple.RippleLFPSelection.set_lfp_electrodes--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -2354,19 +2341,6 @@
     set_lfp_electrodes()
   </a>
   
-    <nav class="md-nav" aria-label="set_lfp_electrodes()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.spyglass.common.common_ripple.RippleLFPSelection.set_lfp_electrodes--parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -2625,21 +2599,52 @@
   <div class="doc doc-contents ">
   
       <p>Removes all electrodes for the specified nwb file and then adds back the electrodes in the list</p>
-<h5 id="src.spyglass.common.common_ripple.RippleLFPSelection.set_lfp_electrodes--parameters">Parameters<a class="headerlink" href="#src.spyglass.common.common_ripple.RippleLFPSelection.set_lfp_electrodes--parameters" title="Permanent link">&para;</a></h5>
 
-<details class="key-" open>
-  <summary>dict</summary>
-  <p>dictionary corresponding to the LFPBand entry to use for ripple detection</p>
-</details>
-<details class="electrode_list-" open>
-  <summary>list</summary>
-  <p>list of electrodes from LFPBandSelection.LFPBandElectrode
-to be used as the ripple LFP during detection</p>
-</details>
-<details class="group_name-" open>
-  <summary>str, optional</summary>
-  <p>description of the electrode group, by default "CA1"</p>
-</details>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>key</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>dictionary corresponding to the LFPBand entry to use for ripple detection</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>electrode_list</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>list of electrodes from LFPBandSelection.LFPBandElectrode
+to be used as the ripple LFP during detection</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>group_name</code></td>
+          <td>
+                <code>str, optional</code>
+          </td>
+          <td><p>description of the electrode group, by default "CA1"</p></td>
+          <td>
+                <code>&#39;CA1&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>src/spyglass/common/common_ripple.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
