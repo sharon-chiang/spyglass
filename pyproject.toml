@@ -59,7 +59,14 @@ dependencies = [
     "spikeinterface",
     "ndx_franklab_novela>=0.1.0",
 ]
+<<<<<<< Updated upstream
 dynamic = ["version"]
+=======
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+>>>>>>> Stashed changes
 
 [project.scripts]
 spyglass_cli = "spyglass.cli:cli"
@@ -105,6 +112,9 @@ exclude = [".git_archival.txt"]
 packages = ["src/spyglass"]
 exclude = []
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.black]
 line-length = 80
 
@@ -133,3 +143,19 @@ convention = "numpy"
 
 [tool.ruff.per-file-ignores]
 "cli.py" = ["D103"]
+
+[tool.pytest.ini_options]
+minversion = "6.2"
+addopts = "--cov=spyglass --cov-report term-missing"
+testpaths =  "tests"
+
+[tool.coverage.run]
+omit = [ # Omitting items with no coverage
+  "**/temp*py",
+  "*/cli/*",
+  "*/decoding/*",
+  "*/figurl_views/*",
+  "*/position/*",
+  "*/sharing/*",
+  "*/spikesorting/*",
+]
