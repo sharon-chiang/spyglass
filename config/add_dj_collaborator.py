@@ -4,23 +4,32 @@ import sys
 import tempfile
 
 # shared_modules = [
-#     "common\_%",
-#     "spikesorting\_%",
-#     "decoding\_%",
-#     "position\_%",
-#     "lfp\_%",
+#     r"common\_%",
+#     r"spikesorting\_%",
+#     r"decoding\_%",
+#     r"position\_%",
+#     r"lfp\_%",
 # ]
 
 
 def add_collab_user(user_name):
+    """Grant user privileges to the database."""
     # create a tempoary file for the command
     file = tempfile.NamedTemporaryFile(mode="w")
 
     file.write(
-        f"GRANT ALL PRIVILEGES ON `{user_name}\_%`.* TO `{user_name}`@'%' IDENTIFIED BY 'temppass';\n"
+        f"GRANT ALL PRIVILEGES ON `{user_name}"
+        + r"\_%`.* TO `"
+        + f"{user_name}`@'%' "
+        + "IDENTIFIED BY 'temppass';\n"
     )
+
     # for module in shared_modules:
-    #     file.write(f"GRANT ALL PRIVILEGES ON `{module}`.* TO `{user_name}`@'%';\n")
+    #     file.write(
+    #         f"GRANT ALL PRIVILEGES ON `{module}`.* TO "
+    #         + f"`{user_name}`@'%';\n"
+    #     )
+
     file.write(f"GRANT SELECT ON `%`.* TO `{user_name}`@'%';\n")
     file.flush()
 

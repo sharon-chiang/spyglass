@@ -112,3 +112,24 @@ line-length = 80
 skip = '.git,*.pdf,*.svg,*.ipynb,./docs/site/**'
 # Nevers - name in Citation
 ignore-words-list = 'nevers'
+
+[tool.ruff]
+select = [
+    "D", # Docstrings  
+    "F", # Pyflakes
+    "E", # Pycodestyle
+    "W", # Pycodestyle
+    "I001" # isort
+]
+line-length = 80
+target-version = "py38"
+ignore = [
+  "F401", # Unused imports
+  "D100", # Module-level docstrings
+] 
+
+[tool.ruff.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.per-file-ignores]
+"cli.py" = ["D103"]

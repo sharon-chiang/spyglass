@@ -8,6 +8,7 @@ target_group = "kachery-users"
 
 
 def add_module(module_name):
+    """Grant all users permissions to module_name."""
     print(f"Granting everyone permissions to module {module_name}")
 
     # create a tempoary file for the command
@@ -22,7 +23,9 @@ def add_module(module_name):
     # get a list of usernames
     for user in group.gr_mem:
         file.write(
-            f"GRANT ALL PRIVILEGES ON `{module_name}\_%`.* TO `{user}`@'%';\n"
+            f"GRANT ALL PRIVILEGES ON `{module_name}"
+            + r"\_%`.* TO "
+            + f"`{user}`@'%';\n"
         )
     file.flush()
 

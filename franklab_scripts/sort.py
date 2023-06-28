@@ -14,8 +14,11 @@ def main():
     os.environ["SPIKE_SORTING_STORAGE_DIR"] = str(data_dir / "spikesorting")
 
     # session_id = 'jaq_01'
-    # nwb_file_name = (sg.common.Session() & {'session_id': session_id}).fetch1('nwb_file_name')
-    nwb_file_name = "beans20190718-trim_.nwb"
+    # nwb_file_name = (sg.common.Session() & {"session_id": session_id}).fetch1(
+    #     "nwb_file_name"
+    # )
+
+    nwb_file_name = "beans20190718-trim_.nwb"  # noqa: F841
 
     sg.common.SpikeSorting().populate()
 

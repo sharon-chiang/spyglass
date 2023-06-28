@@ -10,7 +10,8 @@ def cli():
 
 
 @click.command(
-    help="Insert a session from a .nwb file that lives in the $SPYGLASS_BASE_DIR directory"
+    help="Insert a session from a .nwb file that lives in the "
+    + "$SPYGLASS_BASE_DIR directory"
 )
 @click.argument("nwb_file_name")
 def insert_session(nwb_file_name: str):

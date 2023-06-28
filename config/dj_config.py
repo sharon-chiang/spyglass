@@ -10,7 +10,7 @@ import yaml
 
 
 def generate_config_yaml(filename: str, **kwargs):
-    """Generate a yaml configuration file for the specified user_name. By default this
+    """Generate a yaml config file for the specified user_name.
 
     Parameters
     ----------
@@ -19,7 +19,8 @@ def generate_config_yaml(filename: str, **kwargs):
     output : str
         File type to generate. Either yaml or json
     **kwargs: list of parameters names and values that can include
-        database_host : host name of system running mysql (default lmf-db.cin.ucsf.edu)
+        database_host : host name of system running mysql
+            (default lmf-db.cin.ucsf.edu)
         database_port : port number for mysql server (default 3306)
         database_use_tls : True or False (default True to use tls encryption)
         raw
@@ -75,8 +76,10 @@ def generate_config_yaml(filename: str, **kwargs):
 
 
 def set_configuration(user_name: str, file_name: str = None):
-    """Sets the dj.config parameters for the specified user. Allows for specification of a yaml file with the defaults;
-    if no file is specified, it will write one using the generate_config_yaml function.
+    """Set the dj.config parameters for the specified user.
+
+    Allows for specification of a yaml file with the defaults; if no file is
+    specified, it will write one using the generate_config_yaml function.
 
     Parameters
     ----------

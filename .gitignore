@@ -182,5 +182,7 @@ docs/src/notebooks/
 !docs/src/images/*png
 temp*
 
+.ruff_cache/
+
 # Version
 _version.py

@@ -4,20 +4,22 @@ import sys
 import tempfile
 
 shared_modules = [
-    "common\_%",
-    "spikesorting\_%",
-    "decoding\_%",
-    "position\_%",
-    "lfp\_%",
+    r"common\_%",
+    r"spikesorting\_%",
+    r"decoding\_%",
+    r"position\_%",
+    r"lfp\_%",
 ]
 
 
 def add_user(user_name):
+    """Add user to the database as guest."""
     # create a tempoary file for the command
     file = tempfile.NamedTemporaryFile(mode="w")
 
     file.write(
-        f"GRANT SELECT ON `%`.* TO `{user_name}`@'%' IDENTIFIED BY 'Data_$haring';\n"
+        f"GRANT SELECT ON `%`.* TO `{user_name}`@'%' IDENTIFIED BY "
+        + "'Data_$haring';\n"
     )
     file.flush()
 

@@ -3,10 +3,11 @@ import os
 import sys
 import tempfile
 
-shared_modules = ["common\_%", "spikesorting\_%", "decoding\_%"]
+shared_modules = [r"common\_%", r"spikesorting\_%", r"decoding\_%"]
 
 
 def add_user(user_name):
+    """Add existing user to the database. Requires /home/{user_name} dir."""
     if os.path.isdir(f"/home/{user_name}"):
         print("Creating database user ", user_name)
     else:
@@ -16,7 +17,9 @@ def add_user(user_name):
     file = tempfile.NamedTemporaryFile(mode="w")
 
     file.write(
-        f"GRANT ALL PRIVILEGES ON `{user_name}\_%`.* TO `{user_name}`@'%' IDENTIFIED BY 'temppass';\n"
+        f"GRANT ALL PRIVILEGES ON `{user_name}"
+        + r"\_%`.* TO "
+        + f"`{user_name}`@'%' IDENTIFIED BY 'temppass';\n"
     )
     for module in shared_modules:
         file.write(
