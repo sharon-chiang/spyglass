@@ -332,13 +332,11 @@ class DLCProject(dj.Manual):
                 | stat.S_IROTH
             )
             username = getpass.getuser()
-            if not groupname:
-                groupname = username
             _set_permissions(
                 directory=project_directory,
                 mode=permissions,
                 username=username,
-                groupname=groupname,
+                groupname=username,
             )
         cls.insert1(key, **kwargs)
         cls.BodyPart.insert(

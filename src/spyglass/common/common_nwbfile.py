@@ -5,6 +5,7 @@ import stat
 import string
 
 import datajoint as dj
+import kachery_client as kc
 import numpy as np
 import pandas as pd
 import pynwb

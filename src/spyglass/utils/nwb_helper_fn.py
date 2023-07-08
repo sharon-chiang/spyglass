@@ -34,8 +34,9 @@ def get_nwb_file(nwb_file_path):
         NWB file object for the given path opened in read mode.
     """
     _, nwbfile = __open_nwb_files.get(nwb_file_path, (None, None))
-    nwb_uri = None
-    nwb_raw_uri = None
+
+    # nwb_uri,nwb_raw_uri = None, None # Unused
+
     if nwbfile is None:
         # check to see if the file exists
         if not os.path.exists(nwb_file_path):
@@ -45,7 +46,8 @@ def get_nwb_file(nwb_file_path):
             # first try the analysis files
             from ..sharing.sharing_kachery import AnalysisNwbfileKachery
 
-            # the download functions assume just the filename, so we need to get that from the path
+            # the download functions assume just the filename, so we need to
+            # get that from the path
             if not AnalysisNwbfileKachery.download_file(
                 os.path.basename(nwb_file_path)
             ):

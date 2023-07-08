@@ -542,8 +542,8 @@ class QualityMetrics(dj.Computed):
                 )
             else:
                 raise Exception(
-                    f"{peak_sign_metrics} metrics require peak_sign",
-                    f"to be defined in the metric parameters",
+                    f"{peak_sign_metrics} metrics require peak_sign "
+                    + "to be defined in the metric parameters"
                 )
         else:
             metric = {}

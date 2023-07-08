@@ -1,9 +1,8 @@
 import datajoint as dj
 import ndx_franklab_novela
 
-from .errors import PopulateException
 from ..utils.nwb_helper_fn import get_nwb_file
-
+from .errors import PopulateException
 
 schema = dj.schema("common_device")
 

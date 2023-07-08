@@ -1,6 +1,6 @@
+import datajoint as dj
 import numpy as np
 import pandas as pd
-import datajoint as dj
 
 from ...common.common_nwbfile import AnalysisNwbfile
 from ...utils.dj_helper_fn import fetch_nwb

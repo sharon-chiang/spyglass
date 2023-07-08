@@ -690,11 +690,11 @@ def make_video(
     arrow_radius=15,
     circle_radius=8,
 ):
+    # CBroz: Cyclomatic complexity too high. 35 > 15
     import cv2
 
     RGB_PINK = (234, 82, 111)
     RGB_YELLOW = (253, 231, 76)
-    RGB_WHITE = (255, 255, 255)
     RGB_BLUE = (30, 144, 255)
     RGB_ORANGE = (255, 127, 80)
     #     "#29ff3e",
@@ -741,6 +741,7 @@ def make_video(
                 key: fill_nan(
                     position_mean[key]["orientation"], video_time, position_time
                 )
+                # CBroz: Where is orientation_mean? F821 undefined
                 for key in orientation_mean.keys()
             }
         print(
@@ -913,10 +914,11 @@ def make_video(
 
         position_mean = position_mean["DLC"]
         orientation_mean = orientation_mean["DLC"]
-        frame_offset = -1
-        time_slice = []
+
+        # F841: Local vars assigned to but never used
+        # frame_offset, time_slice, vmax = -1, [], 0.07
+
         video_slowdown = 1
-        vmax = 0.07  # ?
         # Set up formatting for the movie files
 
         window_size = 501
@@ -1026,7 +1028,7 @@ def make_video(
                 f"time = {time_delta:3.4f}s\n frame = {frame_ind}",
                 fontsize=8,
             )
-            fontprops = fm.FontProperties(size=12)
+            # fontprops = fm.FontProperties(size=12)
             #     scalebar = AnchoredSizeBar(axes[0].transData,
             #                                20, '20 cm', 'lower right',
             #                                pad=0.1,

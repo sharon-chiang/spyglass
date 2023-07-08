@@ -23,10 +23,10 @@ from track_linearization import (
     plot_track_graph,
 )
 
+from ..utils.dj_helper_fn import fetch_nwb
 from .common_behav import RawPosition, VideoFile
 from .common_interval import IntervalList
 from .common_nwbfile import AnalysisNwbfile
-from ..utils.dj_helper_fn import fetch_nwb
 
 schema = dj.schema("common_position")
 

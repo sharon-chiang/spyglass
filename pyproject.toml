@@ -59,14 +59,7 @@ dependencies = [
     "spikeinterface",
     "ndx_franklab_novela>=0.1.0",
 ]
-<<<<<<< Updated upstream
 dynamic = ["version"]
-=======
-
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
->>>>>>> Stashed changes
 
 [project.scripts]
 spyglass_cli = "spyglass.cli:cli"
@@ -124,7 +117,9 @@ skip = '.git,*.pdf,*.svg,*.ipynb,./docs/site/**'
 ignore-words-list = 'nevers'
 
 [tool.ruff]
+src = ["src"]
 select = [
+    # "C90", # Complexity
     "D", # Docstrings  
     "F", # Pyflakes
     "E", # Pycodestyle
@@ -158,4 +153,8 @@ omit = [ # Omitting items with no coverage
   "*/position/*",
   "*/sharing/*",
   "*/spikesorting/*",
-]
+  "*/lfp/*",
+  "*/lfp_band/*",
+  "*/common/*",
+  "*/utils/*",
+] 

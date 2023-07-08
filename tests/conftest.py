@@ -25,68 +25,67 @@ def pytest_addoption(parser):
 
     Example
     -------
-    > pytest --my-verbose False
+    > pytest --quiet-spy
 
     Parameters
     ----------
-    --current (bool): Default False. Run only tests marked as current.
-    --my-verbose (bool):  Default True. Pass print statements from Elements.
-    --my-teardown (bool): Default True. Delete pipeline on close.
+    --quiet-spy (bool):  Default False. Allow print statements from Spyglass.
+    --no-teardown (bool): Default False. Delete pipeline on close.
+    --no-server (bool): Default False. Run datajoint server in Docker.
+    --datadir (str): Default './tests/test_data/'. Dir for local input file.
     """
     parser.addoption(
-        "--current",
+        "--quiet-spy",
         action="store_true",
-        dest="current",
+        dest="quiet_spy",
         default=False,
-        help="Run only tests marked as current",
+        help="Quiet print statements from Spyglass.",
     )
     parser.addoption(
-        "--my-verbose",
-        action="store",
-        default="True",
-        help="Verbose for items: True or False",
-        choices=("True", "False"),
+        "--no-server",
+        action="store_true",
+        dest="no_server",
+        default=False,
+        help="Do not launch datajoint server in Docker.",
     )
     parser.addoption(
-        "--my-teardown",
-        action="store",
-        default="True",
-        help="Verbose for items: True or False",
-        choices=("True", "False"),
+        "--no-teardown",
+        action="store_true",
+        default=False,
+        dest="no_teardown",
+        help="Tear down tables after tests.",
     )
+    parser.addoption(
+        "--datadir",
+        action="store",
+        default="./tests/test_data/",
+        dest="datadir",
+        help="Directory for local input file.",
+    )
+
+
+# ------------------- FIXTURES -------------------
 
 
 @pytest.fixture(scope="session")
-def setup(request):
-    """Take passed command line variables, set as global"""
-    global verbose, _tear_down, verbose_context, test_data_dir
+def verbose_context(config):
+    """Verbosity context for supressing Spyglass print statements."""
+    return QuietStdOut() if config.option.quiet_spy else nullcontext()
 
-    verbose = str_to_bool(request.config.getoption("--my-verbose"))
-    _tear_down = str_to_bool(request.config.getoption("--my-teardown"))
 
-    if not verbose:
-        logger.setLevel(50)
+@pytest.fixture(scope="session")
+def teardown(config):
+    return not config.option.no_teardown
 
-    verbose_context = nullcontext() if verbose else QuietStdOut()
 
-    yield verbose_context, _tear_down
+@pytest.fixture(scope="session")
+def spy_config(config):
+    pass
 
 
 def pytest_configure(config):
-    config.addinivalue_line(
-        "markers", "current: for convenience -- mark one test as current"
-    )
-
-    markexpr_list = []
-
-    if config.option.current:
-        markexpr_list.append("current")
-
-    if len(markexpr_list) > 0:
-        markexpr = " and ".join(markexpr_list)
-        setattr(config.option, "markexpr", markexpr)
-
-    _set_env()
+    """Run on build, after parsing command line options."""
+    _set_env(base_dir=config.option.datadir)
 
     # note that in this configuration, every test will use the same datajoint
     # server this may create conflicts and dependencies between tests it may be
@@ -95,69 +94,55 @@ def pytest_configure(config):
     # datajoint runs when the source files are loaded, not when the tests are
     # run. one solution might be to restart the server after every test
 
-    global __PROCESS
-    __PROCESS = run_datajoint_server()
+    if not config.option.no_server:
+        global __PROCESS
+        __PROCESS = run_datajoint_server()
 
 
 def pytest_unconfigure(config):
+    """Called before test process is exited."""
     if __PROCESS:
         logger.info("Terminating datajoint compute resource process")
         __PROCESS.terminate()
 
         # TODO handle ResourceWarning: subprocess X is still running __PROCESS.join()
 
-    kill_datajoint_server()
-    shutil.rmtree(os.environ["SPYGLASS_BASE_DIR"])
+    if not config.option.no_server:
+        kill_datajoint_server()
+        shutil.rmtree(os.environ["SPYGLASS_BASE_DIR"])
 
 
 # ------------------ GENERAL FUNCTION ------------------
 
 
-def str_to_bool(value) -> bool:
-    """Return whether the provided string represents true. Otherwise false.
-    Args:
-        value (any): Any input
-    Returns:
-        bool (bool): True if value in ("y", "yes", "t", "true", "on", "1")
-    """
-    # Due to distutils equivalent depreciation in 3.10
-    # Adopted from github.com/PostHog/posthog/blob/master/posthog/utils.py
-    if not value:
-        return False
-    return str(value).lower() in ("y", "yes", "t", "true", "on", "1")
-
-
-class QuietStdOut:
-    """If verbose set to false, used to quiet tear_down table.delete prints"""
-
-    def __enter__(self):
-        # os.environ["LOG_LEVEL"] = "WARNING"
-        logger.setLevel("CRITICAL")
-        self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, "w")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # os.environ["LOG_LEVEL"] = "INFO"
-        logger.setLevel("INFO")
-        sys.stdout.close()
-        sys.stdout = self._original_stdout
-
-
-# ------------------- FIXTURES -------------------
-
-
-@pytest.fixture(scope="session")
-def _set_env():
+def _set_env(base_dir):
     """Set environment variables."""
-    logger.info("Setting datajoint and kachery environment variables.")
 
-    spyglass_base_dir = pathlib.Path(tempfile.mkdtemp())
+    spyglass_base_dir = pathlib.Path(base_dir)
 
     spike_sorting_storage_dir = spyglass_base_dir / "spikesorting"
     tmp_dir = spyglass_base_dir / "tmp"
 
-    os.environ["SPYGLASS_BASE_DIR"] = str(spyglass_base_dir)
+    logger.info("Setting datajoint and kachery environment variables.")
     logger.info("SPYGLASS_BASE_DIR set to", spyglass_base_dir)
+
+    spy_config_dict = dict(
+        SPYGLASS_BASE_DIR=str(spyglass_base_dir),
+        SPYGLASS_RECORDING_DIR=str(spyglass_base_dir / "recording"),
+        SPYGLASS_SORTING_DIR=str(spyglass_base_dir / "sorting"),
+        SPYGLASS_WAVEFORMS_DIR=str(spyglass_base_dir / "waveforms"),
+        SPYGLASS_TEMP_DIR=str(tmp_dir),
+        SPIKE_SORTING_STORAGE_DIR=str(spike_sorting_storage_dir),
+        KACHERY_ZONE="franklab.collaborators",
+        KACHERY_CLOUD_DIR="/stelmo/nwb/.kachery_cloud",
+        KACHERY_STORAGE_DIR=str(spyglass_base_dir / "kachery_storage"),
+        KACHERY_TEMP_DIR=str(spyglass_base_dir / "tmp"),
+        FIGURL_CHANNEL="franklab2",
+        DJ_SUPPORT_FILEPATH_MANAGEMENT="TRUE",
+        KACHERY_CLOUD_EPHEMERAL="TRUE",
+    )
+
+    os.environ["SPYGLASS_BASE_DIR"] = str(spyglass_base_dir)
     os.environ["DJ_SUPPORT_FILEPATH_MANAGEMENT"] = "TRUE"
     os.environ["SPIKE_SORTING_STORAGE_DIR"] = str(spike_sorting_storage_dir)
     os.environ["SPYGLASS_TEMP_DIR"] = str(tmp_dir)
@@ -189,3 +174,19 @@ def _set_env():
             "stage": str(analysis_dir),
         },
     }
+
+
+class QuietStdOut:
+    """If quiet_spy, used to quiet prints, teardowns and table.delete prints"""
+
+    def __enter__(self):
+        # os.environ["LOG_LEVEL"] = "WARNING"
+        logger.setLevel("CRITICAL")
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, "w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # os.environ["LOG_LEVEL"] = "INFO"
+        logger.setLevel("INFO")
+        sys.stdout.close()
+        sys.stdout = self._original_stdout

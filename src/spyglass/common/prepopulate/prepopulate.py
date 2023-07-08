@@ -1,9 +1,10 @@
-import datajoint as dj
 import logging
 import os
 import pathlib
-import yaml
 import sys
+
+import datajoint as dj
+import yaml
 
 
 def prepopulate_default():

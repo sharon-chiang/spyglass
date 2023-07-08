@@ -37,6 +37,7 @@ class DLCCentroidParams(dj.Manual):
     ]
     _four_led_labels = ["greenLED", "redLED_L", "redLED_C", "redLED_R"]
     _two_pt_labels = ["point1", "point2"]
+    _one_pt_labels = ["point1"]
 
     @classmethod
     def insert_default(cls, **kwargs):
@@ -79,75 +80,50 @@ class DLCCentroidParams(dj.Manual):
         it contains all necessary items
         """
         params = key["params"]
-        if "centroid_method" in params:
-            if params["centroid_method"] in self._available_centroid_methods:
-                if params["centroid_method"] == "four_led_centroid":
-                    if any(
-                        x not in self._four_led_labels for x in params["points"]
-                    ):
-                        raise KeyError(
-                            f"Please make sure to specify all necessary labels: "
-                            f"{self._four_led_labels} "
-                            f"if using the 'four_led_centroid' method"
-                        )
-                elif params["centroid_method"] == "two_pt_centroid":
-                    if any(
-                        x not in self._two_pt_labels for x in params["points"]
-                    ):
-                        raise KeyError(
-                            f"Please make sure to specify all necessary labels: "
-                            f"{self._two_pt_labels} "
-                            f"if using the 'two_pt_centroid' method"
-                        )
-                elif params["centroid_method"] == "one_pt_centroid":
-                    if "point1" not in params["points"]:
-                        raise KeyError(
-                            "Please make sure to specify the necessary label: "
-                            "'point1' "
-                            "if using the 'one_pt_centroid' method"
-                        )
-                else:
-                    raise Exception("This shouldn't happen lol oops")
-            else:
-                raise ValueError(
-                    f"The given 'centroid_method': {params['centroid_method']} "
-                    f"is not in the available methods: "
-                    f"{self._available_centroid_methods}"
-                )
-        else:
+
+        cent_meth = params.get("centroid_method")
+        if cent_meth not in self._available_centroid_methods:
+            raise ValueError(
+                f"The given 'centroid_method': {cent_meth} "
+                f"is not in the available methods: "
+                f"{self._available_centroid_methods}"
+            )
+        cent_pts = {
+            "four_led_centroid": self._four_led_labels,
+            "two_pt_centroid": self._two_pt_labels,
+            "one_pt_centroid": self._one_pt_labels,
+        }
+        if any(x not in cent_pts[cent_meth] for x in params["points"]):
             raise KeyError(
-                "'centroid_method' needs to be provided as a parameter"
+                "Please make sure to specify all necessary labels: "
+                + f"{cent_pts[cent_meth]} "
+                + f"if using the '{cent_meth}' method"
             )
 
-        if "max_LED_separation" in params:
-            if not isinstance(params["max_LED_separation"], (int, float)):
-                raise TypeError(
-                    f"parameter 'max_LED_separation' is type: "
-                    f"{type(params['max_LED_separation'])}, "
-                    f"it should be one of type (float, int)"
+        if "max_LED_separation" in params and not isinstance(
+            params["max_LED_separation"], (int, float)
+        ):
+            raise TypeError(
+                f"parameter 'max_LED_separation' is type: "
+                f"{type(params['max_LED_separation'])}, "
+                f"it should be one of type (float, int)"
+            )
+
+        if params.get("smooth"):
+            if not params.get("smoothing_params"):
+                raise ValueError("smoothing_params not in key['params']")
+
+            smooth_meth = params["smoothing_params"].get("smooth_method")
+            if smooth_meth and smooth_meth not in _key_to_smooth_func_dict:
+                raise KeyError(
+                    f"smooth_method: {smooth_meth} not an available method."
                 )
-        if "smooth" in params:
-            if params["smooth"]:
-                if "smoothing_params" in params:
-                    if "smooth_method" in params["smoothing_params"]:
-                        smooth_method = params["smoothing_params"][
-                            "smooth_method"
-                        ]
-                        if smooth_method not in _key_to_smooth_func_dict:
-                            raise KeyError(
-                                f"smooth_method: {smooth_method} not an available method."
-                            )
-                    if not "smoothing_duration" in params["smoothing_params"]:
-                        raise KeyError(
-                            "smoothing_duration must be passed as a smoothing_params within key['params']"
-                        )
-                    else:
-                        assert isinstance(
-                            params["smoothing_params"]["smoothing_duration"],
-                            (float, int),
-                        ), "smoothing_duration must be a float or int"
-                else:
-                    raise ValueError("smoothing_params not in key['params']")
+            smooth_dur = params["smoothing_params"].get("smoothing_duration")
+            if not isinstance(smooth_dur, (float, int)):
+                raise KeyError(
+                    "smoothing_duration must be passed as a smoothing_params "
+                    + f"within key['params'] as a float or int: {smooth_dur}"
+                )
 
         super().insert1(key, **kwargs)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
+
 import spyglass.common as sgc
 
 nwb_file_name = "RN2_20191110_.nwb"

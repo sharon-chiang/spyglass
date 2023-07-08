@@ -7,6 +7,7 @@ import datajoint as dj
 import pynwb
 import pytest
 from hdmf.backends.warnings import BrokenLinkWarning
+
 from spyglass.data_import.insert_sessions import copy_nwb_link_raw_ephys
 
 

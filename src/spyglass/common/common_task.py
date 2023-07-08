@@ -2,11 +2,11 @@ import datajoint as dj
 import ndx_franklab_novela
 import pynwb
 
+from ..utils.nwb_helper_fn import get_nwb_file
 from .common_device import CameraDevice
 from .common_interval import IntervalList
 from .common_nwbfile import Nwbfile
 from .common_session import Session  # noqa: F401
-from ..utils.nwb_helper_fn import get_nwb_file
 
 schema = dj.schema("common_task")
 

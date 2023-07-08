@@ -1,6 +1,6 @@
 import datajoint as dj
-
 import sortingview as sv
+import spikeinterface as si
 
 from ..common.common_lab import LabMember, LabTeam
 from .sortingview_helper_fn import (
@@ -10,8 +10,6 @@ from .sortingview_helper_fn import (
 from .spikesorting_curation import Curation
 from .spikesorting_recording import SpikeSortingRecording
 from .spikesorting_sorting import SpikeSorting
-
-import spikeinterface as si
 
 schema = dj.schema("spikesorting_sortingview")
 

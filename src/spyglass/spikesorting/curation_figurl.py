@@ -1,16 +1,14 @@
-import datajoint as dj
+from typing import Any, Dict, List, Union
 
-from typing import Any, Union, List, Dict
+import datajoint as dj
+import kachery_cloud as kcl
+import sortingview.views as vv
+import spikeinterface as si
+from sortingview.SpikeSortingView import SpikeSortingView
 
 from .spikesorting_curation import Curation
 from .spikesorting_recording import SpikeSortingRecording
 from .spikesorting_sorting import SpikeSorting
-
-import spikeinterface as si
-
-from sortingview.SpikeSortingView import SpikeSortingView
-import kachery_cloud as kcl
-import sortingview.views as vv
 
 schema = dj.schema("spikesorting_curation_figurl")
 

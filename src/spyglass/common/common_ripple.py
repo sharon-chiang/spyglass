@@ -4,12 +4,13 @@ import numpy as np
 import pandas as pd
 from ripple_detection import Karlsson_ripple_detector, Kay_ripple_detector
 from ripple_detection.core import gaussian_smooth, get_envelope
+
 from spyglass.common import (
     IntervalList,  # noqa
     IntervalPositionInfo,
 )
-from spyglass.lfp.v1 import LFPBand, LFPBandSelection
 from spyglass.common.common_nwbfile import AnalysisNwbfile
+from spyglass.lfp.v1 import LFPBand, LFPBandSelection
 from spyglass.utils.dj_helper_fn import fetch_nwb
 
 schema = dj.schema("common_ripple")
@@ -262,6 +263,7 @@ class RippleTimes(dj.Computed):
             axis=1,
         )
 
+        # CBroz: @edno, where does valid_position_info come from? F821 undefined
         position_info = interpolate_to_new_time(
             valid_position_info, interval_ripple_lfps.index
         )

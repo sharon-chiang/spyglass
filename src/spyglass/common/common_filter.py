@@ -1,6 +1,6 @@
 # code to define filters that can be applied to continuous time data
-from typing import Union
 import warnings
+from typing import Union
 
 import datajoint as dj
 import matplotlib.pyplot as plt

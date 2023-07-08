@@ -1,12 +1,11 @@
 "Sortingview helper functions"
 
-from typing import Dict, List, Union, Any, Tuple
-
-import spikeinterface as si
+from typing import Any, Dict, List, Tuple, Union
 
 import kachery_cloud as kcl
 import sortingview as sv
 import sortingview.views as vv
+import spikeinterface as si
 from sortingview.SpikeSortingView import SpikeSortingView
 
 from .merged_sorting_extractor import MergedSortingExtractor

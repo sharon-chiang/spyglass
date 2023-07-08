@@ -7,7 +7,11 @@ import numpy as np
 
 # import tables so that we can call them easily
 from spyglass.common import AnalysisNwbfile
-from spyglass.decoding.clusterless import MarkParameters, UnitMarkParameters, UnitMarks
+from spyglass.decoding.clusterless import (
+    MarkParameters,
+    UnitMarkParameters,
+    UnitMarks,
+)
 from spyglass.spikesorting import SpikeSorting
 
 # ignore datajoint+jupyter async warnings
