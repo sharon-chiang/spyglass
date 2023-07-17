@@ -33,6 +33,7 @@ def pytest_addoption(parser):
     --no-teardown (bool): Default False. Delete pipeline on close.
     --no-server (bool): Default False. Run datajoint server in Docker.
     --datadir (str): Default './tests/test_data/'. Dir for local input file.
+        WARNING: not yet implemented.
     """
     parser.addoption(
         "--quiet-spy",
@@ -118,7 +119,9 @@ def pytest_unconfigure(config):
 def _set_env(base_dir):
     """Set environment variables."""
 
-    spyglass_base_dir = pathlib.Path(base_dir)
+    # TODO: change from tempdir to user supplied dir
+    # spyglass_base_dir = pathlib.Path(base_dir)
+    spyglass_base_dir = pathlib.Path(tempfile.mkdtemp())
 
     spike_sorting_storage_dir = spyglass_base_dir / "spikesorting"
     tmp_dir = spyglass_base_dir / "tmp"
@@ -126,6 +129,7 @@ def _set_env(base_dir):
     logger.info("Setting datajoint and kachery environment variables.")
     logger.info("SPYGLASS_BASE_DIR set to", spyglass_base_dir)
 
+    # TODO: make this a fixture
     spy_config_dict = dict(
         SPYGLASS_BASE_DIR=str(spyglass_base_dir),
         SPYGLASS_RECORDING_DIR=str(spyglass_base_dir / "recording"),
