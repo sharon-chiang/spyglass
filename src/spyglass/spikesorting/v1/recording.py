@@ -1,39 +1,36 @@
-import os
-import shutil
-from functools import reduce
-from pathlib import Path
+from typing import Tuple, Iterable, Optional, Union, List
 
 import datajoint as dj
 import numpy as np
+import pynwb
 import probeinterface as pi
 import spikeinterface as si
 import spikeinterface.extractors as se
+from hdmf.data_utils import GenericDataChunkIterator
 
-from ..common.common_device import Probe, ProbeType  # noqa: F401
-from ..common.common_ephys import Electrode, ElectrodeGroup
-from ..common.common_interval import (
+from spyglass.common import Session  # noqa: F401
+from spyglass.common.common_ephys import Electrode, Raw  # noqa: F401
+from spyglass.common.common_device import Probe
+from spyglass.common.common_nwbfile import AnalysisNwbfile, Nwbfile
+from spyglass.common.common_interval import (
     IntervalList,
     interval_list_intersect,
-    intervals_by_length,
-    union_adjacent_index,
 )
-from ..common.common_lab import LabTeam  # noqa: F401
-from ..common.common_nwbfile import Nwbfile
-from ..common.common_session import Session  # noqa: F401
-from ..utils.dj_helper_fn import dj_replace
-from ..settings import recording_dir
+from spyglass.common.common_lab import LabTeam
+from spyglass.spikesorting.v1.utils import generate_nwb_uuid
 
-schema = dj.schema("spikesorting_recording")
+schema = dj.schema("spikesorting_v1_recording")
 
 
 @schema
 class SortGroup(dj.Manual):
     definition = """
-    # Set of electrodes that will be sorted together
+    # Set of electrodes to spike sort together
     -> Session
-    sort_group_id: int  # identifier for a group of electrodes
+    sort_group_name: varchar(30)
     ---
-    sort_reference_electrode_id = -1: int  # the electrode to use for reference. -1: no reference, -2: common median
+    sort_reference_electrode_id = -1: int  # the electrode to use for referencing
+                                           # -1: no reference, -2: common median
     """
 
     class SortGroupElectrode(dj.Part):
@@ -42,41 +39,36 @@ class SortGroup(dj.Manual):
         -> Electrode
         """
 
+    @classmethod
     def set_group_by_shank(
-        self,
+        cls,
         nwb_file_name: str,
         references: dict = None,
         omit_ref_electrode_group=False,
         omit_unitrode=True,
     ):
-        """Divides electrodes into groups based on their shank position.
-
-        * Electrodes from probes with 1 shank (e.g. tetrodes) are placed in a
+        """Create sort group for each shank.
+        - Electrodes from probes with 1 shank (e.g. tetrodes) are placed in a
           single group
-        * Electrodes from probes with multiple shanks (e.g. polymer probes) are
+        - Electrodes from probes with multiple shanks (e.g. polymer probes) are
           placed in one group per shank
-        * Bad channels are omitted
+        - Bad channels are omitted
 
         Parameters
         ----------
         nwb_file_name : str
-            the name of the NWB file whose electrodes should be put into
-            sorting groups
+            the name of the NWB file whose electrodes should be put into sorting groups
         references : dict, optional
             If passed, used to set references. Otherwise, references set using
-            original reference electrodes from config. Keys: electrode groups.
-            Values: reference electrode.
-        omit_ref_electrode_group : bool
-            Optional. If True, no sort group is defined for electrode group of
-            reference.
-        omit_unitrode : bool
-            Optional. If True, no sort groups are defined for unitrodes.
+            original reference electrodes from config. Keys: electrode groups. Values: reference electrode.
+        omit_ref_electrode_group : bool, optional
+            If True, no sort group is defined for electrode group of reference.
+        omit_unitrode : bool, optional
+            If True, no sort groups are defined for unitrodes.
         """
-        # delete any current groups
-        (SortGroup & {"nwb_file_name": nwb_file_name}).delete()
         # get the electrodes from this NWB file
         electrodes = (
-            Electrode()
+            Electrode
             & {"nwb_file_name": nwb_file_name}
             & {"bad_channel": "False"}
         ).fetch()
@@ -96,7 +88,9 @@ class SortGroup(dj.Manual):
             sge_key["electrode_group_name"] = e_group
             # get the indices of all electrodes in this group / shank and set their sorting group
             for shank in shank_list:
-                sg_key["sort_group_id"] = sge_key["sort_group_id"] = sort_group
+                sg_key["sort_group_name"] = sge_key[
+                    "sort_group_name"
+                ] = sort_group
                 # specify reference electrode. Use 'references' if passed, otherwise use reference from config
                 if not references:
                     shank_elect_ref = electrodes[
@@ -113,14 +107,12 @@ class SortGroup(dj.Manual):
                         ]
                     else:
                         ValueError(
-                            f"Error in electrode group {e_group}: reference "
-                            + "electrodes are not all the same"
+                            f"Error in electrode group {e_group}: reference electrodes are not all the same"
                         )
                 else:
                     if e_group not in references.keys():
                         raise Exception(
-                            f"electrode group {e_group} not a key in "
-                            + "references, so cannot set reference"
+                            f"electrode group {e_group} not a key in references, so cannot set reference"
                         )
                     else:
                         sg_key["sort_reference_electrode_id"] = references[
@@ -141,16 +133,14 @@ class SortGroup(dj.Manual):
                     len(reference_electrode_group) != 1
                 ):
                     raise Exception(
-                        "Should have found exactly one electrode group for "
-                        + "reference electrode, but found "
-                        + f"{len(reference_electrode_group)}."
+                        f"Should have found exactly one electrode group for reference electrode,"
+                        f"but found {len(reference_electrode_group)}."
                     )
                 if omit_ref_electrode_group and (
                     str(e_group) == str(reference_electrode_group)
                 ):
                     print(
-                        f"Omitting electrode group {e_group} from sort groups "
-                        + "because contains reference."
+                        f"Omitting electrode group {e_group} from sort groups because contains reference."
                     )
                     continue
                 shank_elect = electrodes["electrode_id"][
@@ -166,454 +156,375 @@ class SortGroup(dj.Manual):
                         f"Omitting electrode group {e_group}, shank {shank} from sort groups because unitrode."
                     )
                     continue
-                self.insert1(sg_key)
+                cls.insert1(sg_key, skip_duplicates=True)
                 for elect in shank_elect:
                     sge_key["electrode_id"] = elect
-                    self.SortGroupElectrode().insert1(sge_key)
+                    cls.SortGroupElectrode.insert1(
+                        sge_key, skip_duplicates=True
+                    )
                 sort_group += 1
 
-    def set_group_by_electrode_group(self, nwb_file_name: str):
-        """Assign groups to all non-bad channel electrodes based on their electrode group
-        and sets the reference for each group to the reference for the first channel of the group.
-
-        Parameters
-        ----------
-        nwb_file_name: str
-            the name of the nwb whose electrodes should be put into sorting groups
-        """
-        # delete any current groups
-        (SortGroup & {"nwb_file_name": nwb_file_name}).delete()
-        # get the electrodes from this NWB file
-        electrodes = (
-            Electrode()
-            & {"nwb_file_name": nwb_file_name}
-            & {"bad_channel": "False"}
-        ).fetch()
-        e_groups = np.unique(electrodes["electrode_group_name"])
-        sg_key = dict()
-        sge_key = dict()
-        sg_key["nwb_file_name"] = sge_key["nwb_file_name"] = nwb_file_name
-        sort_group = 0
-        for e_group in e_groups:
-            sge_key["electrode_group_name"] = e_group
-            # sg_key['sort_group_id'] = sge_key['sort_group_id'] = sort_group
-            # TEST
-            sg_key["sort_group_id"] = sge_key["sort_group_id"] = int(e_group)
-            # get the list of references and make sure they are all the same
-            shank_elect_ref = electrodes["original_reference_electrode"][
-                electrodes["electrode_group_name"] == e_group
-            ]
-            if np.max(shank_elect_ref) == np.min(shank_elect_ref):
-                sg_key["sort_reference_electrode_id"] = shank_elect_ref[0]
-            else:
-                ValueError(
-                    f"Error in electrode group {e_group}: reference electrodes are not all the same"
-                )
-            self.insert1(sg_key)
-
-            shank_elect = electrodes["electrode_id"][
-                electrodes["electrode_group_name"] == e_group
-            ]
-            for elect in shank_elect:
-                sge_key["electrode_id"] = elect
-                self.SortGroupElectrode().insert1(sge_key)
-            sort_group += 1
-
-    def set_reference_from_list(self, nwb_file_name, sort_group_ref_list):
-        """
-        Set the reference electrode from a list containing sort groups and reference electrodes
-        :param: sort_group_ref_list - 2D array or list where each row is [sort_group_id reference_electrode]
-        :param: nwb_file_name - The name of the NWB file whose electrodes' references should be updated
-        :return: Null
-        """
-        key = dict()
-        key["nwb_file_name"] = nwb_file_name
-        sort_group_list = (SortGroup() & key).fetch1()
-        for sort_group in sort_group_list:
-            key["sort_group_id"] = sort_group
-            self.insert(
-                dj_replace(
-                    sort_group_list,
-                    sort_group_ref_list,
-                    "sort_group_id",
-                    "sort_reference_electrode_id",
-                ),
-                replace="True",
-            )
-
-    def get_geometry(self, sort_group_id, nwb_file_name):
-        """
-        Returns a list with the x,y coordinates of the electrodes in the sort group
-        for use with the SpikeInterface package.
-
-        Converts z locations to y where appropriate.
-
-        Parameters
-        ----------
-        sort_group_id : int
-        nwb_file_name : str
-
-        Returns
-        -------
-        geometry : list
-            List of coordinate pairs, one per electrode
-        """
-
-        # create the channel_groups dictiorary
-        channel_group = dict()
-        key = dict()
-        key["nwb_file_name"] = nwb_file_name
-        electrodes = (Electrode() & key).fetch()
-
-        key["sort_group_id"] = sort_group_id
-        sort_group_electrodes = (SortGroup.SortGroupElectrode() & key).fetch()
-        electrode_group_name = sort_group_electrodes["electrode_group_name"][0]
-        probe_id = (
-            ElectrodeGroup
-            & {
-                "nwb_file_name": nwb_file_name,
-                "electrode_group_name": electrode_group_name,
-            }
-        ).fetch1("probe_id")
-        channel_group[sort_group_id] = dict()
-        channel_group[sort_group_id]["channels"] = sort_group_electrodes[
-            "electrode_id"
-        ].tolist()
-
-        n_chan = len(channel_group[sort_group_id]["channels"])
-
-        geometry = np.zeros((n_chan, 2), dtype="float")
-        tmp_geom = np.zeros((n_chan, 3), dtype="float")
-        for i, electrode_id in enumerate(
-            channel_group[sort_group_id]["channels"]
-        ):
-            # get the relative x and y locations of this channel from the probe table
-            probe_electrode = int(
-                electrodes["probe_electrode"][
-                    electrodes["electrode_id"] == electrode_id
-                ]
-            )
-            rel_x, rel_y, rel_z = (
-                Probe().Electrode()
-                & {"probe_id": probe_id, "probe_electrode": probe_electrode}
-            ).fetch("rel_x", "rel_y", "rel_z")
-            # TODO: Fix this HACK when we can use probeinterface:
-            rel_x = float(rel_x)
-            rel_y = float(rel_y)
-            rel_z = float(rel_z)
-            tmp_geom[i, :] = [rel_x, rel_y, rel_z]
-
-        # figure out which columns have coordinates
-        n_found = 0
-        for i in range(3):
-            if np.any(np.nonzero(tmp_geom[:, i])):
-                if n_found < 2:
-                    geometry[:, n_found] = tmp_geom[:, i]
-                    n_found += 1
-                else:
-                    Warning(
-                        "Relative electrode locations have three coordinates; only two are currently supported"
-                    )
-        return np.ndarray.tolist(geometry)
-
 
 @schema
-class SortInterval(dj.Manual):
+class SpikeSortingPreprocessingParameters(dj.Lookup):
     definition = """
-    -> Session
-    sort_interval_name: varchar(200) # name for this interval
-    ---
-    sort_interval: longblob # 1D numpy array with start and end time for a single interval to be used for spike sorting
-    """
-
-
-@schema
-class SpikeSortingPreprocessingParameters(dj.Manual):
-    definition = """
-    preproc_params_name: varchar(200)
+    # Parameters for denoising (filtering and referencing/whitening) recording
+    # prior to spike sorting
+    preproc_param_name: varchar(200)
     ---
     preproc_params: blob
     """
 
-    def insert_default(self):
-        # set up the default filter parameters
-        freq_min = 300  # high pass filter value
-        freq_max = 6000  # low pass filter value
-        margin_ms = 5  # margin in ms on border to avoid border effect
-        seed = 0  # random seed for whitening
+    contents = [
+        [
+            "default",
+            {
+                "frequency_min": 300,  # high pass filter value
+                "frequency_max": 6000,  # low pass filter value
+                "margin_ms": 5,  # margin in ms on border to avoid border effect
+                "seed": 0,  # random seed for whitening
+                "min_segment_length": 1,  # minimum segment length in seconds
+            },
+        ]
+    ]
 
-        key = dict()
-        key["preproc_params_name"] = "default"
-        key["preproc_params"] = {
-            "frequency_min": freq_min,
-            "frequency_max": freq_max,
-            "margin_ms": margin_ms,
-            "seed": seed,
-        }
-        self.insert1(key, skip_duplicates=True)
+    @classmethod
+    def insert_default(cls):
+        cls.insert(cls.contents, skip_duplicates=True)
 
 
 @schema
 class SpikeSortingRecordingSelection(dj.Manual):
     definition = """
-    # Defines recordings to be sorted
+    # Raw voltage traces and parameters. Use `insert_selection` method to insert rows.
+    recording_id: varchar(50)
+    ---
+    -> Raw
     -> SortGroup
-    -> SortInterval
+    -> IntervalList
     -> SpikeSortingPreprocessingParameters
     -> LabTeam
-    ---
-    -> IntervalList
     """
+
+    @classmethod
+    def insert_selection(cls, key: dict):
+        """Insert a row into SpikeSortingRecordingSelection with an
+        automatically generated unique recording ID as the sole primary key.
+
+        Parameters
+        ----------
+        key : dict
+            primary key of Raw, SortGroup, IntervalList, SpikeSortingPreprocessingParameters, LabTeam tables
+
+        Returns
+        -------
+        recording_id : str
+            the unique recording ID serving as primary key for SpikeSortingRecordingSelection
+        """
+        if len((cls & key).fetch()) > 0:
+            print(
+                "This row has already been inserted into SpikeSortingRecordingSelection."
+            )
+            return (cls & key).fetch1()
+        key["recording_id"] = generate_nwb_uuid(key["nwb_file_name"], "R", 6)
+        cls.insert1(key, skip_duplicates=True)
+        return key
 
 
 @schema
 class SpikeSortingRecording(dj.Computed):
     definition = """
+    # Processed recording
     -> SpikeSortingRecordingSelection
     ---
-    recording_path: varchar(1000)
-    -> IntervalList.proj(sort_interval_list_name='interval_list_name')
+    -> AnalysisNwbfile
+    object_id: varchar(40) # Object ID for the processed recording in NWB file
     """
 
     def make(self, key):
+        # DO:
+        # - get valid times for sort interval
+        # - proprocess recording
+        # - write recording to NWB file
         sort_interval_valid_times = self._get_sort_interval_valid_times(key)
-        recording = self._get_filtered_recording(key)
-        recording_name = self._get_recording_name(key)
-
-        # Path to files that will hold the recording extractors
-        recording_path = str(recording_dir / Path(recording_name))
-        if os.path.exists(recording_path):
-            shutil.rmtree(recording_path)
-
-        recording.save(
-            folder=recording_path, chunk_duration="10000ms", n_jobs=8
+        recording, timestamps = self._get_preprocessed_recording(key)
+        recording_nwb_file_name, recording_object_id = _write_recording_to_nwb(
+            recording,
+            timestamps,
+            (SpikeSortingRecordingSelection & key).fetch1("nwb_file_name"),
         )
+        key["analysis_file_name"] = recording_nwb_file_name
+        key["object_id"] = recording_object_id
 
+        # INSERT:
+        # - valid times into IntervalList
+        # - analysis NWB file holding processed recording into AnalysisNwbfile
+        # - entry into SpikeSortingRecording
         IntervalList.insert1(
             {
-                "nwb_file_name": key["nwb_file_name"],
-                "interval_list_name": recording_name,
+                "nwb_file_name": (SpikeSortingRecordingSelection & key).fetch1(
+                    "nwb_file_name"
+                ),
+                "interval_list_name": key["recording_id"],
                 "valid_times": sort_interval_valid_times,
-            },
-            replace=True,
-        )
-
-        self.insert1(
-            {
-                **key,
-                # store the list of valid times for the sort
-                "sort_interval_list_name": recording_name,
-                "recording_path": recording_path,
             }
         )
-
-    @staticmethod
-    def _get_recording_name(key):
-        return "_".join(
-            [
-                key["nwb_file_name"],
-                key["sort_interval_name"],
-                str(key["sort_group_id"]),
-                key["preproc_params_name"],
-            ]
+        AnalysisNwbfile().add(
+            (SpikeSortingRecordingSelection & key).fetch1("nwb_file_name"),
+            key["analysis_file_name"],
         )
+        self.insert1(key)
+
+    @classmethod
+    def get_recording(cls, key: dict) -> si.BaseRecording:
+        """Get recording related to this curation as spikeinterface BaseRecording
+
+        Parameters
+        ----------
+        key : dict
+            primary key of SpikeSorting table
+        """
+
+        analysis_file_name = (cls & key).fetch1("analysis_file_name")
+        analysis_file_abs_path = AnalysisNwbfile.get_abs_path(
+            analysis_file_name
+        )
+        recording = se.read_nwb_recording(
+            analysis_file_abs_path, load_time_vector=True
+        )
+
+        return recording
 
     @staticmethod
     def _get_recording_timestamps(recording):
-        num_segments = recording.get_num_segments()
+        if recording.get_num_segments() > 1:
+            frames_per_segment = [0]
+            for i in range(recording.get_num_segments()):
+                frames_per_segment.append(
+                    recording.get_num_frames(segment_index=i)
+                )
 
-        if num_segments <= 1:
-            return recording.get_times()
+            cumsum_frames = np.cumsum(frames_per_segment)
+            total_frames = np.sum(frames_per_segment)
 
-        frames_per_segment = [0] + [
-            recording.get_num_frames(segment_index=i)
-            for i in range(num_segments)
-        ]
-
-        cumsum_frames = np.cumsum(frames_per_segment)
-        total_frames = np.sum(frames_per_segment)
-
-        timestamps = np.zeros((total_frames,))
-        for i in range(num_segments):
-            start_index = cumsum_frames[i]
-            end_index = cumsum_frames[i + 1]
-            timestamps[start_index:end_index] = recording.get_times(
-                segment_index=i
-            )
-
+            timestamps = np.zeros((total_frames,))
+            for i in range(recording.get_num_segments()):
+                timestamps[
+                    cumsum_frames[i] : cumsum_frames[i + 1]
+                ] = recording.get_times(segment_index=i)
+        else:
+            timestamps = recording.get_times()
         return timestamps
 
-    def _get_sort_interval_valid_times(self, key):
+    def _get_sort_interval_valid_times(self, key: dict):
         """Identifies the intersection between sort interval specified by the user
-        and the valid times (times for which neural data exist)
+        and the valid times (times for which neural data exist, excluding e.g. dropped packets).
 
         Parameters
         ----------
         key: dict
-            specifies a (partially filled) entry of SpikeSorting table
+            primary key of SpikeSortingRecordingSelection table
 
         Returns
         -------
         sort_interval_valid_times: ndarray of tuples
-            (start, end) times for valid stretches of the sorting interval
+            (start, end) times for valid intervals in the sort interval
 
         """
+        # FETCH:
+        # - sort interval
+        # - valid times
+        # - preprocessing parameters
         sort_interval = (
-            SortInterval
+            IntervalList
             & {
-                "nwb_file_name": key["nwb_file_name"],
-                "sort_interval_name": key["sort_interval_name"],
+                "nwb_file_name": (SpikeSortingRecordingSelection & key).fetch1(
+                    "nwb_file_name"
+                ),
+                "interval_list_name": (
+                    SpikeSortingRecordingSelection & key
+                ).fetch1("interval_list_name"),
             }
-        ).fetch1("sort_interval")
-
-        interval_list_name = (SpikeSortingRecordingSelection & key).fetch1(
-            "interval_list_name"
-        )
-
+        ).fetch1("valid_times")
         valid_interval_times = (
             IntervalList
             & {
-                "nwb_file_name": key["nwb_file_name"],
-                "interval_list_name": interval_list_name,
+                "nwb_file_name": (SpikeSortingRecordingSelection & key).fetch1(
+                    "nwb_file_name"
+                ),
+                "interval_list_name": "raw data valid times",
             }
         ).fetch1("valid_times")
+        params = (
+            SpikeSortingPreprocessingParameters * SpikeSortingRecordingSelection
+            & key
+        ).fetch1("preproc_params")
 
+        # DO:
+        # - take intersection between sort interval and valid times
         valid_sort_times = interval_list_intersect(
-            sort_interval, valid_interval_times
+            sort_interval,
+            valid_interval_times,
+            min_length=params["min_segment_length"],
         )
-        # Exclude intervals shorter than specified length
-        params = (SpikeSortingPreprocessingParameters & key).fetch1(
-            "preproc_params"
-        )
-        if "min_segment_length" in params:
-            valid_sort_times = intervals_by_length(
-                valid_sort_times, min_length=params["min_segment_length"]
-            )
+
         return valid_sort_times
 
-    def _get_filtered_recording(self, key: dict):
-        """Filters and references a recording
-        * Loads the NWB file created during insertion as a spikeinterface Recording
-        * Slices recording in time (interval) and space (channels);
+    def _get_preprocessed_recording(self, key: dict):
+        """Filters and references a recording.
+        - Loads the NWB file created during insertion as a spikeinterface Recording
+        - Slices recording in time (interval) and space (channels);
           recording chunks from disjoint intervals are concatenated
-        * Applies referencing and bandpass filtering
+        - Applies referencing and bandpass filtering
 
         Parameters
         ----------
-        key: dict,
-            primary key of SpikeSortingRecording table
+        key: dict
+            primary key of SpikeSortingRecordingSelection table
 
         Returns
         -------
         recording: si.Recording
         """
+        # FETCH:
+        # - full path to NWB file
+        # - channels to be included in the sort
+        # - the reference channel
+        # - probe type
+        # - filter parameters
+        nwb_file_name = (SpikeSortingRecordingSelection & key).fetch1(
+            "nwb_file_name"
+        )
+        sort_group_name = (SpikeSortingRecordingSelection & key).fetch1(
+            "sort_group_name"
+        )
+        nwb_file_abs_path = Nwbfile().get_abs_path(nwb_file_name)
+        channel_ids = (
+            SortGroup.SortGroupElectrode
+            & {
+                "nwb_file_name": nwb_file_name,
+                "sort_group_name": sort_group_name,
+            }
+        ).fetch("electrode_id")
+        ref_channel_id = (
+            SortGroup
+            & {
+                "nwb_file_name": nwb_file_name,
+                "sort_group_name": sort_group_name,
+            }
+        ).fetch1("sort_reference_electrode_id")
+        recording_channel_ids = np.setdiff1d(channel_ids, ref_channel_id)
 
-        nwb_file_abs_path = Nwbfile().get_abs_path(key["nwb_file_name"])
+        probe_type_by_channel = []
+        electrode_group_by_channel = []
+        for channel_id in channel_ids:
+            probe_type_by_channel.append(
+                (
+                    Electrode * Probe
+                    & {
+                        "nwb_file_name": nwb_file_name,
+                        "electrode_id": channel_id,
+                    }
+                ).fetch1("probe_type")
+            )
+            electrode_group_by_channel.append(
+                (
+                    Electrode
+                    & {
+                        "nwb_file_name": nwb_file_name,
+                        "electrode_id": channel_id,
+                    }
+                ).fetch1("electrode_group_name")
+            )
+        probe_type = np.unique(probe_type_by_channel)
+        filter_params = (
+            SpikeSortingPreprocessingParameters * SpikeSortingRecordingSelection
+            & key
+        ).fetch1("preproc_params")
+
+        # DO:
+        # - load NWB file as a spikeinterface Recording
+        # - slice the recording object in time and channels
+        # - apply referencing depending on the option chosen by the user
+        # - apply bandpass filter
+        # - set probe to recording
         recording = se.read_nwb_recording(
             nwb_file_abs_path, load_time_vector=True
         )
-
+        # TODO: make sure the following works for recordings that don't have explicit timestamps
         valid_sort_times = self._get_sort_interval_valid_times(key)
-        # shape is (N, 2)
-        valid_sort_times_indices = np.array(
-            [
-                np.searchsorted(recording.get_times(), interval)
-                for interval in valid_sort_times
-            ]
+        valid_sort_times_indices = _consolidate_intervals(
+            valid_sort_times, recording.get_times()
         )
-        # join intervals of indices that are adjacent
-        valid_sort_times_indices = reduce(
-            union_adjacent_index, valid_sort_times_indices
-        )
-        if valid_sort_times_indices.ndim == 1:
-            valid_sort_times_indices = np.expand_dims(
-                valid_sort_times_indices, 0
-            )
-
-        # create an AppendRecording if there is more than one disjoint sort interval
+        # slice in time; concatenate disjoint sort intervals
         if len(valid_sort_times_indices) > 1:
             recordings_list = []
+            timestamps = []
             for interval_indices in valid_sort_times_indices:
                 recording_single = recording.frame_slice(
                     start_frame=interval_indices[0],
                     end_frame=interval_indices[1],
                 )
                 recordings_list.append(recording_single)
-            recording = si.append_recordings(recordings_list)
+                timestamps.append(
+                    recording.get_times()[
+                        interval_indices[0] : interval_indices[1]
+                    ]
+                )
+            recording = si.concatenate_recordings(recordings_list)
         else:
             recording = recording.frame_slice(
                 start_frame=valid_sort_times_indices[0][0],
                 end_frame=valid_sort_times_indices[0][1],
             )
-
-        channel_ids = (
-            SortGroup.SortGroupElectrode
-            & {
-                "nwb_file_name": key["nwb_file_name"],
-                "sort_group_id": key["sort_group_id"],
-            }
-        ).fetch("electrode_id")
-        ref_channel_id = (
-            SortGroup
-            & {
-                "nwb_file_name": key["nwb_file_name"],
-                "sort_group_id": key["sort_group_id"],
-            }
-        ).fetch1("sort_reference_electrode_id")
-        channel_ids = np.setdiff1d(channel_ids, ref_channel_id)
-
-        # include ref channel in first slice, then exclude it in second slice
+            timestamps = recording.get_times()[
+                valid_sort_times_indices[0][0] : valid_sort_times_indices[0][1]
+            ]
+        # slice in channels; include ref channel in first slice, then exclude it in second slice
         if ref_channel_id >= 0:
-            channel_ids_ref = np.append(channel_ids, ref_channel_id)
-            recording = recording.channel_slice(channel_ids=channel_ids_ref)
-
+            recording = recording.channel_slice(channel_ids=channel_ids)
             recording = si.preprocessing.common_reference(
-                recording, reference="single", ref_channel_ids=ref_channel_id
+                recording,
+                reference="single",
+                ref_channel_ids=ref_channel_id,
+                dtype=np.float64,
             )
-            recording = recording.channel_slice(channel_ids=channel_ids)
+            recording = recording.channel_slice(
+                channel_ids=recording_channel_ids
+            )
         elif ref_channel_id == -2:
-            recording = recording.channel_slice(channel_ids=channel_ids)
+            recording = recording.channel_slice(
+                channel_ids=recording_channel_ids
+            )
             recording = si.preprocessing.common_reference(
-                recording, reference="global", operator="median"
+                recording,
+                reference="global",
+                operator="median",
+                dtype=np.float64,
+            )
+        elif ref_channel_id == -1:
+            recording = recording.channel_slice(
+                channel_ids=recording_channel_ids
             )
         else:
-            raise ValueError("Invalid reference channel ID")
-        filter_params = (SpikeSortingPreprocessingParameters & key).fetch1(
-            "preproc_params"
-        )
+            raise ValueError(
+                "Invalid reference channel ID. Use -1 to skip referencing. Use -2 to reference via global median. Use positive integer to reference to a specific channel."
+            )
+
         recording = si.preprocessing.bandpass_filter(
             recording,
             freq_min=filter_params["frequency_min"],
             freq_max=filter_params["frequency_max"],
+            dtype=np.float64,
         )
 
         # if the sort group is a tetrode, change the channel location
-        # note that this is a workaround that would be deprecated when spikeinterface uses 3D probe locations
-        probe_type = []
-        electrode_group = []
-        for channel_id in channel_ids:
-            probe_type.append(
-                (
-                    Electrode * Probe
-                    & {
-                        "nwb_file_name": key["nwb_file_name"],
-                        "electrode_id": channel_id,
-                    }
-                ).fetch1("probe_type")
-            )
-            electrode_group.append(
-                (
-                    Electrode
-                    & {
-                        "nwb_file_name": key["nwb_file_name"],
-                        "electrode_id": channel_id,
-                    }
-                ).fetch1("electrode_group_name")
-            )
+        # (necessary because the channel location for tetrodes are not set properly)
         if (
-            all(p == "tetrode_12.5" for p in probe_type)
-            and len(probe_type) == 4
-            and all(eg == electrode_group[0] for eg in electrode_group)
+            len(probe_type) == 1
+            and probe_type[0] == "tetrode_12.5"
+            and len(recording_channel_ids) == 4
+            and len(np.unique(electrode_group_by_channel)) == 1
         ):
             tetrode = pi.Probe(ndim=2)
             position = [[0, 0], [0, 12.5], [12.5, 0], [12.5, 12.5]]
@@ -624,4 +535,332 @@ class SpikeSortingRecording(dj.Computed):
             tetrode.set_device_channel_indices(np.arange(4))
             recording = recording.set_probe(tetrode, in_place=True)
 
-        return recording
+        return recording, np.asarray(timestamps)
+
+
+def _consolidate_intervals(intervals, timestamps):
+    """Convert a list of intervals (start_time, stop_time)
+    to a list of intervals (start_index, stop_index) by comparing to a list of timestamps;
+    then consolidates overlapping or adjacent intervals
+
+    Parameters
+    ----------
+    intervals : iterable of tuples
+        _description_
+    timestamps : numpy.ndarray
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
+    # Convert intervals to a numpy array if it's not
+    intervals = np.array(intervals)
+    if intervals.shape[1] != 2:
+        raise ValueError(
+            "Input array must have shape (N, 2) where N is the number of intervals."
+        )
+    # Check if intervals are sorted. If not, sort them.
+    if not np.all(intervals[:-1] <= intervals[1:]):
+        intervals = np.sort(intervals, axis=0)
+
+    # Initialize an empty list to store the consolidated intervals
+    consolidated = []
+
+    # Convert start and stop times to indices
+    start_indices = np.searchsorted(timestamps, intervals[:, 0], side="left")
+    stop_indices = (
+        np.searchsorted(timestamps, intervals[:, 1], side="right") - 1
+    )
+
+    # Start with the first interval
+    start, stop = start_indices[0], stop_indices[0]
+
+    # Loop through the rest of the intervals to join them if needed
+    for i in range(1, len(start_indices)):
+        next_start, next_stop = start_indices[i], stop_indices[i]
+
+        # If the stop time of the current interval is equal to or greater than the next start time minus 1
+        if stop >= next_start - 1:
+            stop = max(
+                stop, next_stop
+            )  # Extend the current interval to include the next one
+        else:
+            # Add the current interval to the consolidated list
+            consolidated.append((start, stop))
+            start, stop = next_start, next_stop  # Start a new interval
+
+    # Add the last interval to the consolidated list
+    consolidated.append((start, stop))
+
+    # Convert the consolidated list to a NumPy array and return
+    return np.array(consolidated)
+
+
+def _write_recording_to_nwb(
+    recording: si.BaseRecording,
+    timestamps: Iterable,
+    nwb_file_name: str,
+):
+    """Write a recording in NWB format
+
+    Parameters
+    ----------
+    recording : si.Recording
+    timestamps : iterable
+    nwb_file_name : str
+        name of NWB file the recording originates
+
+    Returns
+    -------
+    analysis_nwb_file : str
+        name of analysis NWB file containing the preprocessed recording
+    """
+
+    analysis_nwb_file = AnalysisNwbfile().create(nwb_file_name)
+    analysis_nwb_file_abs_path = AnalysisNwbfile.get_abs_path(analysis_nwb_file)
+    with pynwb.NWBHDF5IO(
+        path=analysis_nwb_file_abs_path,
+        mode="a",
+        load_namespaces=True,
+    ) as io:
+        nwbfile = io.read()
+        table_region = nwbfile.create_electrode_table_region(
+            region=[i for i in recording.get_channel_ids()],
+            description="Sort group",
+        )
+        data_iterator = SpikeInterfaceRecordingDataChunkIterator(
+            recording=recording, return_scaled=False, buffer_gb=7
+        )
+        timestamps_iterator = TimestampsDataChunkIterator(
+            recording=TimestampsExtractor(timestamps), buffer_gb=5
+        )
+        processed_electrical_series = pynwb.ecephys.ElectricalSeries(
+            name="ProcessedElectricalSeries",
+            data=data_iterator,
+            electrodes=table_region,
+            timestamps=timestamps_iterator,
+            filtering="Bandpass filtered for spike band",
+            description=f"Referenced and filtered recording from {nwb_file_name} for spike sorting",
+            conversion=np.unique(recording.get_channel_gains())[0] * 1e-6,
+        )
+        nwbfile.add_acquisition(processed_electrical_series)
+        recording_object_id = nwbfile.acquisition[
+            "ProcessedElectricalSeries"
+        ].object_id
+        io.write(nwbfile)
+    return analysis_nwb_file, recording_object_id
+
+
+# For writing recording to NWB file
+
+
+class SpikeInterfaceRecordingDataChunkIterator(GenericDataChunkIterator):
+    """DataChunkIterator specifically for use on RecordingExtractor objects."""
+
+    def __init__(
+        self,
+        recording: si.BaseRecording,
+        segment_index: int = 0,
+        return_scaled: bool = False,
+        buffer_gb: Optional[float] = None,
+        buffer_shape: Optional[tuple] = None,
+        chunk_mb: Optional[float] = None,
+        chunk_shape: Optional[tuple] = None,
+        display_progress: bool = False,
+        progress_bar_options: Optional[dict] = None,
+    ):
+        """
+        Initialize an Iterable object which returns DataChunks with data and their selections on each iteration.
+
+        Parameters
+        ----------
+        recording : si.BaseRecording
+            The SpikeInterfaceRecording object which handles the data access.
+        segment_index : int, optional
+            The recording segment to iterate on.
+            Defaults to 0.
+        return_scaled : bool, optional
+            Whether to return the trace data in scaled units (uV, if True) or in the raw data type (if False).
+            Defaults to False.
+        buffer_gb : float, optional
+            The upper bound on size in gigabytes (GB) of each selection from the iteration.
+            The buffer_shape will be set implicitly by this argument.
+            Cannot be set if `buffer_shape` is also specified.
+            The default is 1GB.
+        buffer_shape : tuple, optional
+            Manual specification of buffer shape to return on each iteration.
+            Must be a multiple of chunk_shape along each axis.
+            Cannot be set if `buffer_gb` is also specified.
+            The default is None.
+        chunk_mb : float, optional
+            The upper bound on size in megabytes (MB) of the internal chunk for the HDF5 dataset.
+            The chunk_shape will be set implicitly by this argument.
+            Cannot be set if `chunk_shape` is also specified.
+            The default is 1MB, as recommended by the HDF5 group. For more details, see
+            https://support.hdfgroup.org/HDF5/doc/TechNotes/TechNote-HDF5-ImprovingIOPerformanceCompressedDatasets.pdf
+        chunk_shape : tuple, optional
+            Manual specification of the internal chunk shape for the HDF5 dataset.
+            Cannot be set if `chunk_mb` is also specified.
+            The default is None.
+        display_progress : bool, optional
+            Display a progress bar with iteration rate and estimated completion time.
+        progress_bar_options : dict, optional
+            Dictionary of keyword arguments to be passed directly to tqdm.
+            See https://github.com/tqdm/tqdm#parameters for options.
+        """
+        self.recording = recording
+        self.segment_index = segment_index
+        self.return_scaled = return_scaled
+        self.channel_ids = recording.get_channel_ids()
+        super().__init__(
+            buffer_gb=buffer_gb,
+            buffer_shape=buffer_shape,
+            chunk_mb=chunk_mb,
+            chunk_shape=chunk_shape,
+            display_progress=display_progress,
+            progress_bar_options=progress_bar_options,
+        )
+
+    def _get_data(self, selection: Tuple[slice]) -> Iterable:
+        return self.recording.get_traces(
+            segment_index=self.segment_index,
+            channel_ids=self.channel_ids[selection[1]],
+            start_frame=selection[0].start,
+            end_frame=selection[0].stop,
+            return_scaled=self.return_scaled,
+        )
+
+    def _get_dtype(self):
+        return self.recording.get_dtype()
+
+    def _get_maxshape(self):
+        return (
+            self.recording.get_num_samples(segment_index=self.segment_index),
+            self.recording.get_num_channels(),
+        )
+
+
+class TimestampsExtractor(si.BaseRecording):
+    def __init__(
+        self,
+        timestamps,
+        sampling_frequency=30e3,
+    ):
+        si.BaseRecording.__init__(
+            self, sampling_frequency, channel_ids=[0], dtype=np.float64
+        )
+        rec_segment = TimestampsSegment(
+            timestamps=timestamps,
+            sampling_frequency=sampling_frequency,
+            t_start=None,
+            dtype=np.float64,
+        )
+        self.add_recording_segment(rec_segment)
+
+
+class TimestampsSegment(si.BaseRecordingSegment):
+    def __init__(self, timestamps, sampling_frequency, t_start, dtype):
+        si.BaseRecordingSegment.__init__(
+            self, sampling_frequency=sampling_frequency, t_start=t_start
+        )
+        self._timeseries = timestamps
+
+    def get_num_samples(self) -> int:
+        return self._timeseries.shape[0]
+
+    def get_traces(
+        self,
+        start_frame: Union[int, None] = None,
+        end_frame: Union[int, None] = None,
+        channel_indices: Union[List, None] = None,
+    ) -> np.ndarray:
+        return np.squeeze(self._timeseries[start_frame:end_frame])
+
+
+class TimestampsDataChunkIterator(GenericDataChunkIterator):
+    """DataChunkIterator specifically for use on RecordingExtractor objects."""
+
+    def __init__(
+        self,
+        recording: si.BaseRecording,
+        segment_index: int = 0,
+        return_scaled: bool = False,
+        buffer_gb: Optional[float] = None,
+        buffer_shape: Optional[tuple] = None,
+        chunk_mb: Optional[float] = None,
+        chunk_shape: Optional[tuple] = None,
+        display_progress: bool = False,
+        progress_bar_options: Optional[dict] = None,
+    ):
+        """
+        Initialize an Iterable object which returns DataChunks with data and their selections on each iteration.
+
+        Parameters
+        ----------
+        recording : SpikeInterfaceRecording
+            The SpikeInterfaceRecording object (RecordingExtractor or BaseRecording) which handles the data access.
+        segment_index : int, optional
+            The recording segment to iterate on.
+            Defaults to 0.
+        return_scaled : bool, optional
+            Whether to return the trace data in scaled units (uV, if True) or in the raw data type (if False).
+            Defaults to False.
+        buffer_gb : float, optional
+            The upper bound on size in gigabytes (GB) of each selection from the iteration.
+            The buffer_shape will be set implicitly by this argument.
+            Cannot be set if `buffer_shape` is also specified.
+            The default is 1GB.
+        buffer_shape : tuple, optional
+            Manual specification of buffer shape to return on each iteration.
+            Must be a multiple of chunk_shape along each axis.
+            Cannot be set if `buffer_gb` is also specified.
+            The default is None.
+        chunk_mb : float, optional
+            The upper bound on size in megabytes (MB) of the internal chunk for the HDF5 dataset.
+            The chunk_shape will be set implicitly by this argument.
+            Cannot be set if `chunk_shape` is also specified.
+            The default is 1MB, as recommended by the HDF5 group. For more details, see
+            https://support.hdfgroup.org/HDF5/doc/TechNotes/TechNote-HDF5-ImprovingIOPerformanceCompressedDatasets.pdf
+        chunk_shape : tuple, optional
+            Manual specification of the internal chunk shape for the HDF5 dataset.
+            Cannot be set if `chunk_mb` is also specified.
+            The default is None.
+        display_progress : bool, optional
+            Display a progress bar with iteration rate and estimated completion time.
+        progress_bar_options : dict, optional
+            Dictionary of keyword arguments to be passed directly to tqdm.
+            See https://github.com/tqdm/tqdm#parameters for options.
+        """
+        self.recording = recording
+        self.segment_index = segment_index
+        self.return_scaled = return_scaled
+        self.channel_ids = recording.get_channel_ids()
+        super().__init__(
+            buffer_gb=buffer_gb,
+            buffer_shape=buffer_shape,
+            chunk_mb=chunk_mb,
+            chunk_shape=chunk_shape,
+            display_progress=display_progress,
+            progress_bar_options=progress_bar_options,
+        )
+
+    # change channel id to always be first channel
+    def _get_data(self, selection: Tuple[slice]) -> Iterable:
+        return self.recording.get_traces(
+            segment_index=self.segment_index,
+            channel_ids=[0],
+            start_frame=selection[0].start,
+            end_frame=selection[0].stop,
+            return_scaled=self.return_scaled,
+        )
+
+    def _get_dtype(self):
+        return self.recording.get_dtype()
+
+    # remove the last dim for the timestamps since it is always just a 1D vector
+    def _get_maxshape(self):
+        return (
+            self.recording.get_num_samples(segment_index=self.segment_index),
+        )
