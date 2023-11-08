@@ -1,21 +1,12 @@
 {
-    "editor.formatOnSave": true,
-    "files.trimTrailingWhitespace": true,
-    "files.trimFinalNewlines": true,
-    "editor.multiCursorModifier": "ctrlCmd",
-    "autoDocstring.docstringFormat": "numpy",
-    "remote.SSH.remoteServerListenOnSocket": true,
-    "git.confirmSync": false,
-    "python.analysis.typeCheckingMode": "off",
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": true
-        },
-    },
-    "isort.args": [
-        "--profile",
-        "black"
-    ],
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "autoDocstring.docstringFormat": "numpy",
+  "remote.SSH.remoteServerListenOnSocket": true,
+  "git.confirmSync": false,
+  "python.analysis.typeCheckingMode": "off",
+  "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter"
+  },
 }

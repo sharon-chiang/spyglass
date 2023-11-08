@@ -1,39 +1,21 @@
-from .curation_figurl import CurationFigurl, CurationFigurlSelection
-from .sortingview import SortingviewWorkspace, SortingviewWorkspaceSelection
-from .spikesorting_artifact import (
-    ArtifactDetection,
+from .recording import (
+    SortGroup,
+    SpikeSortingPreprocessingParameters,
+    SpikeSortingRecordingSelection,
+    SpikeSortingRecording,
+)
+from .artifact import (
     ArtifactDetectionParameters,
     ArtifactDetectionSelection,
-    ArtifactRemovedIntervalList,
+    ArtifactDetection,
 )
-from .spikesorting_curation import (
-    AutomaticCuration,
-    AutomaticCurationParameters,
-    AutomaticCurationSelection,
-    CuratedSpikeSorting,
-    CuratedSpikeSortingSelection,
-    Curation,
-    MetricParameters,
-    MetricSelection,
-    QualityMetrics,
-    UnitInclusionParameters,
+from .sorting import SpikeSorterParameters, SpikeSortingSelection, SpikeSorting
+from .curation import CurationV1
+from .metric_curation import (
     WaveformParameters,
-    Waveforms,
-    WaveformSelection,
+    MetricParameters,
+    MetricCurationParameters,
+    MetricCurationSelection,
+    MetricCuration,
 )
-from .spikesorting_populator import (
-    SpikeSortingPipelineParameters,
-    spikesorting_pipeline_populator,
-)
-from .spikesorting_recording import (
-    SortGroup,
-    SortInterval,
-    SpikeSortingPreprocessingParameters,
-    SpikeSortingRecording,
-    SpikeSortingRecordingSelection,
-)
-from .spikesorting_sorting import (
-    SpikeSorterParameters,
-    SpikeSorting,
-    SpikeSortingSelection,
-)
+from .figurl_curation import FigURLCurationSelection, FigURLCuration
